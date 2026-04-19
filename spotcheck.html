@@ -4,33 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#f5c518">
+<meta name="theme-color" content="#38544A">
 <title>SPOT CHECK — Gather AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Inter:wght@400;500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 /* === CUSTOM PROPERTIES === */
 :root {
-  --bg: #f8f7f4;
+  --bg: #f4f6f5;
   --card: #ffffff;
-  --yellow: #f5c518;
-  --yellow-light: #fef9e7;
-  --blue: #1a5276;
-  --blue-light: #eaf2f8;
-  --green: #27ae60;
-  --red: #e74c3c;
-  --orange: #f39c12;
-  --text: #2c3e50;
-  --muted: #7f8c8d;
-  --border: #e8e6e0;
-  --shadow: 0 2px 8px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
+  --mint: #14E2AC;
+  --mint-light: #e6fdf6;
+  --dark: #38544A;
+  --dark-light: #eaf0ee;
+  --green: #649F49;
+  --red: #C94B38;
+  --orange: #CE8C46;
+  --yellow: #D8B958;
+  --blue: #76AEEA;
+  --text: #1A1A1C;
+  --muted: #8E9094;
+  --border: #CCCDD1;
+  --shadow: 0 2px 8px rgba(0,0,0,0.07);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
   --radius: 10px;
   --radius-sm: 6px;
-  --font-title: 'Black Ops One', cursive;
-  --font-body: 'Inter', sans-serif;
+  --font-title: 'Poppins', sans-serif;
+  --font-body: 'Poppins', sans-serif;
   --font-mono: 'Share Tech Mono', monospace;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -80,25 +82,25 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 .title-bg {
   position: absolute; inset: 0;
   background:
-    repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(26,82,118,0.04) 59px, rgba(26,82,118,0.04) 60px),
-    repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(26,82,118,0.04) 59px, rgba(26,82,118,0.04) 60px);
+    repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(56,84,74,0.04) 59px, rgba(56,84,74,0.04) 60px),
+    repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(56,84,74,0.04) 59px, rgba(56,84,74,0.04) 60px);
   pointer-events: none;
 }
 .title-logo-wrap { text-align: center; margin-bottom: 8px; position: relative; z-index: 1; }
 .title-logo {
   font-family: var(--font-title);
-  font-size: clamp(42px, 12vw, 68px);
-  color: var(--blue);
-  letter-spacing: 4px;
+  font-size: clamp(42px, 12vw, 64px);
+  font-weight: 900;
+  color: var(--dark);
+  letter-spacing: 2px;
   line-height: 1;
-  text-shadow: 3px 3px 0 var(--yellow);
 }
+.title-logo span { color: var(--mint); }
 .title-tagline {
   font-size: 13px;
   color: var(--muted);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.2px;
   margin-top: 6px;
-  font-style: italic;
 }
 .title-meta {
   display: flex; align-items: center; gap: 12px;
@@ -108,8 +110,8 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 .title-puzzle-num {
   font-family: var(--font-mono);
   font-size: 14px;
-  color: var(--blue);
-  background: var(--blue-light);
+  color: var(--dark);
+  background: var(--dark-light);
   padding: 5px 12px;
   border-radius: 20px;
   font-weight: 600;
@@ -120,7 +122,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   display: flex; align-items: center; gap: 4px;
 }
 .title-streak .flame { font-size: 16px; }
-.title-streak-count { font-weight: 700; color: var(--orange); }
+.title-streak-count { font-weight: 700; color: var(--mint); }
 
 .title-menu {
   display: flex; flex-direction: column; gap: 10px;
@@ -128,11 +130,11 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   position: relative; z-index: 1;
 }
 .btn-primary {
-  background: var(--yellow);
-  color: var(--blue);
+  background: var(--mint);
+  color: var(--dark);
   font-weight: 800;
-  font-size: 16px;
-  letter-spacing: 1.5px;
+  font-size: 15px;
+  letter-spacing: 1px;
   padding: 18px 24px;
   border-radius: var(--radius);
   min-height: 56px;
@@ -152,7 +154,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   color: var(--text);
   font-weight: 600;
   font-size: 14px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   padding: 14px 24px;
   border-radius: var(--radius);
   border: 1.5px solid var(--border);
@@ -178,10 +180,10 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 .title-already-played {
   text-align: center;
   padding: 12px 16px;
-  background: var(--blue-light);
+  background: var(--dark-light);
   border-radius: var(--radius);
   font-size: 13px;
-  color: var(--blue);
+  color: var(--dark);
   font-weight: 600;
   max-width: 360px;
   width: 100%;
@@ -202,9 +204,10 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 }
 .modal-title {
   font-family: var(--font-title);
-  font-size: 24px;
-  color: var(--blue);
-  letter-spacing: 2px;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--dark);
+  letter-spacing: 0.5px;
 }
 .btn-close {
   width: 40px; height: 40px; font-size: 20px;
@@ -229,8 +232,8 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   display: flex; gap: 10px; align-items: flex-start;
 }
 .htp-num {
-  background: var(--yellow);
-  color: var(--blue);
+  background: var(--mint);
+  color: var(--dark);
   font-weight: 800;
   font-size: 13px;
   min-width: 24px; height: 24px;
@@ -253,8 +256,8 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 }
 .error-tag {
   display: inline-block;
-  background: var(--blue-light);
-  color: var(--blue);
+  background: var(--dark-light);
+  color: var(--dark);
   font-size: 12px; font-weight: 600;
   padding: 4px 10px; border-radius: 20px;
   margin: 3px 3px 3px 0;
@@ -284,8 +287,9 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 .modal-card h2 {
   font-family: var(--font-title);
   font-size: 20px;
-  color: var(--blue);
-  letter-spacing: 1.5px;
+  font-weight: 800;
+  color: var(--dark);
+  letter-spacing: 0.3px;
   margin-bottom: 6px;
 }
 .modal-card p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
@@ -300,12 +304,12 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   outline: none;
   transition: border-color 0.15s;
 }
-.form-group input:focus { border-color: var(--blue); }
+.form-group input:focus { border-color: var(--mint); }
 .form-group input::placeholder { color: var(--muted); }
 
 /* === PRE-ROUND BRIEFING === */
 #screen-briefing {
-  background: var(--blue);
+  background: var(--dark);
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -336,7 +340,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 .briefing-progress {
   position: absolute; bottom: 0; left: 0;
   height: 3px;
-  background: var(--yellow);
+  background: var(--mint);
   transition: width 0.05s linear;
 }
 
@@ -350,7 +354,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 #screen-game.active { display: flex; }
 
 .game-topbar {
-  background: var(--blue);
+  background: var(--dark);
   color: white;
   padding: 10px 16px;
   display: flex; align-items: center; justify-content: space-between;
@@ -370,16 +374,16 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   background: rgba(255,255,255,0.25);
   transition: background 0.2s;
 }
-.round-dot.active { background: var(--yellow); }
+.round-dot.active { background: var(--mint); }
 .round-dot.done { background: rgba(255,255,255,0.6); }
 
 .timer-bar-wrap {
-  height: 5px; background: rgba(26,82,118,0.1); flex-shrink: 0;
+  height: 5px; background: rgba(56,84,74,0.1); flex-shrink: 0;
   position: relative;
 }
 .timer-bar {
   height: 100%; width: 100%;
-  background: var(--green);
+  background: var(--mint);
   transition: width 0.1s linear, background 0.3s;
   transform-origin: left;
 }
@@ -388,18 +392,18 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 .timer-bar.critical { background: var(--red); }
 
 .reference-panel {
-  background: var(--blue-light);
+  background: var(--dark-light);
   padding: 10px 14px;
   flex-shrink: 0;
   max-height: 110px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  border-bottom: 1px solid rgba(26,82,118,0.1);
+  border-bottom: 1px solid rgba(56,84,74,0.1);
 }
 .ref-label {
   font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 1.5px; color: var(--blue);
+  letter-spacing: 1.5px; color: var(--dark);
   margin-bottom: 6px; opacity: 0.7;
 }
 .ref-table {
@@ -407,7 +411,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 }
 .ref-item {
   background: white;
-  border: 1px solid rgba(26,82,118,0.12);
+  border: 1px solid rgba(56,84,74,0.12);
   border-radius: var(--radius-sm);
   padding: 5px 8px;
   font-family: var(--font-mono);
@@ -415,7 +419,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   color: var(--text);
   line-height: 1.4;
 }
-.ref-item .ref-slot { font-weight: 700; color: var(--blue); }
+.ref-item .ref-slot { font-weight: 700; color: var(--dark); }
 .ref-item .ref-sku { color: var(--muted); font-size: 10px; }
 
 .game-grid-wrap {
@@ -449,7 +453,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   .cell:hover { transform: scale(1.02); box-shadow: var(--shadow-md); }
 }
 .cell:active { transform: scale(0.96); }
-.cell.flagged { border-color: var(--yellow); box-shadow: 0 0 0 1px var(--yellow), var(--shadow); }
+.cell.flagged { border-color: var(--mint); box-shadow: 0 0 0 1px var(--mint), var(--shadow); }
 .cell.resolved-found { border-color: var(--green); cursor: default; }
 .cell.resolved-missed { border-color: var(--red); cursor: default; }
 .cell.resolved-false { border-color: var(--orange); cursor: default; }
@@ -471,8 +475,8 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 .cell-flag-badge {
   position: absolute; top: -6px; right: -6px;
   width: 18px; height: 18px;
-  background: var(--yellow);
-  color: var(--blue);
+  background: var(--mint);
+  color: var(--dark);
   font-weight: 900;
   font-size: 12px;
   border-radius: 50%;
@@ -524,7 +528,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 }
 .btn-submit {
   width: 100%; min-height: 56px;
-  background: var(--blue);
+  background: var(--dark);
   color: white;
   font-weight: 800; font-size: 16px;
   letter-spacing: 2px; text-transform: uppercase;
@@ -561,8 +565,8 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 }
 .scorecard-type {
   font-family: var(--font-title);
-  font-size: 20px; color: var(--blue);
-  letter-spacing: 1px; margin-bottom: 16px;
+  font-size: 18px; font-weight: 800; color: var(--dark);
+  letter-spacing: 0.3px; margin-bottom: 16px;
 }
 .scorecard-row {
   display: flex; justify-content: space-between;
@@ -596,25 +600,25 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   overflow: hidden;
 }
 .end-report-header {
-  background: var(--blue);
+  background: var(--dark);
   padding: 20px;
   color: white;
 }
 .end-report-header h3 {
   font-family: var(--font-mono);
   font-size: 13px; letter-spacing: 1px;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255,255,255,0.6);
   margin-bottom: 2px;
 }
 .end-report-header h2 {
   font-family: var(--font-title);
-  font-size: 22px; letter-spacing: 1.5px;
+  font-size: 20px; font-weight: 700; letter-spacing: 0.3px;
 }
 .end-accuracy-title {
   margin-top: 10px;
   font-family: var(--font-title);
-  font-size: 28px; letter-spacing: 2px;
-  color: var(--yellow); line-height: 1.1;
+  font-size: 26px; font-weight: 900; letter-spacing: 0.5px;
+  color: var(--mint); line-height: 1.1;
 }
 .end-manager-line {
   font-size: 12px; color: rgba(255,255,255,0.65);
@@ -679,7 +683,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   padding-top: 10px; margin-top: 6px;
   border-top: 2px solid var(--text);
 }
-.end-total-val { font-family: var(--font-mono); color: var(--blue); }
+.end-total-val { font-family: var(--font-mono); color: var(--dark); }
 
 .end-actions {
   display: grid; grid-template-columns: 1fr 1fr 1fr;
@@ -691,14 +695,14 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   border-radius: var(--radius);
   padding: 14px 8px;
   font-size: 12px; font-weight: 700;
-  letter-spacing: 0.5px; text-transform: uppercase;
+  letter-spacing: 0.3px; text-transform: uppercase;
   color: var(--text); text-align: center;
   transition: background 0.1s, transform 0.1s;
 }
 .btn-end-action:active { background: var(--bg); transform: scale(0.97); }
 .btn-end-action.primary-action {
-  background: var(--yellow); border-color: var(--yellow);
-  color: var(--blue);
+  background: var(--mint); border-color: var(--mint);
+  color: var(--dark);
 }
 
 /* Gather AI insight card */
@@ -706,7 +710,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   position: fixed;
   bottom: calc(-200px - var(--safe-bottom));
   left: 0; right: 0;
-  background: var(--blue);
+  background: var(--dark);
   border-radius: var(--radius) var(--radius) 0 0;
   padding: 20px 20px calc(20px + var(--safe-bottom));
   box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
@@ -722,7 +726,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 }
 .gather-card-logo {
   font-size: 10px; font-weight: 800; letter-spacing: 2px;
-  color: var(--yellow); text-transform: uppercase;
+  color: var(--mint); text-transform: uppercase;
   margin-bottom: 8px;
 }
 .gather-card-text {
@@ -730,10 +734,10 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   line-height: 1.5; margin-bottom: 14px;
 }
 .btn-gather-cta {
-  background: var(--yellow);
-  color: var(--blue);
+  background: var(--mint);
+  color: var(--dark);
   font-weight: 800; font-size: 13px;
-  letter-spacing: 1px; text-transform: uppercase;
+  letter-spacing: 0.5px; text-transform: uppercase;
   padding: 13px 20px; border-radius: var(--radius-sm);
   width: 100%;
 }
@@ -752,7 +756,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 }
 .stats-title {
   font-family: var(--font-title);
-  font-size: 22px; color: var(--blue); letter-spacing: 2px;
+  font-size: 22px; font-weight: 800; color: var(--dark); letter-spacing: 0.3px;
 }
 .stats-grid {
   display: grid; grid-template-columns: 1fr 1fr 1fr;
@@ -766,7 +770,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 }
 .stat-card-val {
   font-family: var(--font-mono);
-  font-size: 26px; font-weight: 700; color: var(--blue);
+  font-size: 26px; font-weight: 700; color: var(--dark);
 }
 .stat-card-label {
   font-size: 10px; color: var(--muted);
@@ -870,7 +874,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
     <button class="btn-mute" id="btn-mute" onclick="toggleMute()" aria-label="Toggle sound">🔊</button>
   </div>
   <div class="title-logo-wrap">
-    <div class="title-logo">SPOT CHECK</div>
+    <div class="title-logo">SPOT <span>CHECK</span></div>
     <div class="title-tagline">Find the errors. Beat the clock. Prove you know the floor.</div>
   </div>
   <div class="title-meta">
