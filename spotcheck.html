@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f5c518">
+<title>SPOT CHECK — Gather AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Inter:wght@400;500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* === CUSTOM PROPERTIES === */
+:root {
+  --bg: #f8f7f4;
+  --card: #ffffff;
+  --yellow: #f5c518;
+  --yellow-light: #fef9e7;
+  --blue: #1a5276;
+  --blue-light: #eaf2f8;
+  --green: #27ae60;
+  --red: #e74c3c;
+  --orange: #f39c12;
+  --text: #2c3e50;
+  --muted: #7f8c8d;
+  --border: #e8e6e0;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --font-title: 'Black Ops One', cursive;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+/* === RESET === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  height: 100%; overflow: hidden;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+}
+button { cursor: pointer; border: none; background: none; font-family: inherit; touch-action: manipulation; }
+input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ }
+
+/* === SCREENS === */
+.screen {
+  position: fixed; inset: 0;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+.screen.active { display: flex; }
+
+/* === TITLE SCREEN === */
+#screen-title {
+  background: var(--bg);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  gap: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.title-bg {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(26,82,118,0.04) 59px, rgba(26,82,118,0.04) 60px),
+    repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(26,82,118,0.04) 59px, rgba(26,82,118,0.04) 60px);
+  pointer-events: none;
+}
+.title-logo-wrap { text-align: center; margin-bottom: 8px; position: relative; z-index: 1; }
+.title-logo {
+  font-family: var(--font-title);
+  font-size: clamp(42px, 12vw, 68px);
+  color: var(--blue);
+  letter-spacing: 4px;
+  line-height: 1;
+  text-shadow: 3px 3px 0 var(--yellow);
+}
+.title-tagline {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  margin-top: 6px;
+  font-style: italic;
+}
+.title-meta {
+  display: flex; align-items: center; gap: 12px;
+  margin: 16px 0 20px;
+  position: relative; z-index: 1;
+}
+.title-puzzle-num {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--blue);
+  background: var(--blue-light);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.title-streak {
+  font-size: 14px;
+  color: var(--text);
+  display: flex; align-items: center; gap: 4px;
+}
+.title-streak .flame { font-size: 16px; }
+.title-streak-count { font-weight: 700; color: var(--orange); }
+
+.title-menu {
+  display: flex; flex-direction: column; gap: 10px;
+  width: 100%; max-width: 360px;
+  position: relative; z-index: 1;
+}
+.btn-primary {
+  background: var(--yellow);
+  color: var(--blue);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  padding: 18px 24px;
+  border-radius: var(--radius);
+  min-height: 56px;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.1s, box-shadow 0.1s;
+  width: 100%;
+  text-transform: uppercase;
+}
+.btn-primary:active { transform: scale(0.97); box-shadow: var(--shadow); }
+.btn-primary.already-played {
+  background: var(--border);
+  color: var(--muted);
+  cursor: default;
+}
+.btn-secondary {
+  background: var(--card);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  padding: 14px 24px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  min-height: 48px;
+  transition: background 0.1s, transform 0.1s;
+  width: 100%;
+}
+.btn-secondary:active { background: var(--bg); transform: scale(0.98); }
+
+.title-mute-wrap {
+  position: absolute; top: 16px; right: 16px;
+  z-index: 10;
+}
+.btn-mute {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow);
+}
+.title-already-played {
+  text-align: center;
+  padding: 12px 16px;
+  background: var(--blue-light);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--blue);
+  font-weight: 600;
+  max-width: 360px;
+  width: 100%;
+  position: relative; z-index: 1;
+}
+
+/* === HOW TO PLAY === */
+#screen-howtoplay {
+  background: var(--bg);
+  padding: 24px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.modal-title {
+  font-family: var(--font-title);
+  font-size: 24px;
+  color: var(--blue);
+  letter-spacing: 2px;
+}
+.btn-close {
+  width: 40px; height: 40px; font-size: 20px;
+  border-radius: 50%; background: var(--border);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.1s;
+}
+.btn-close:active { background: var(--muted); color: white; }
+.htp-body {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.htp-intro { margin-bottom: 16px; }
+.htp-rules { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.htp-rules li {
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.htp-num {
+  background: var(--yellow);
+  color: var(--blue);
+  font-weight: 800;
+  font-size: 13px;
+  min-width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.htp-errors {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+.htp-errors h3 {
+  font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 12px;
+}
+.error-tag {
+  display: inline-block;
+  background: var(--blue-light);
+  color: var(--blue);
+  font-size: 12px; font-weight: 600;
+  padding: 4px 10px; border-radius: 20px;
+  margin: 3px 3px 3px 0;
+}
+
+/* === NAME ENTRY MODAL === */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none; align-items: center; justify-content: center;
+  z-index: 100;
+  padding: 24px;
+}
+.overlay.active { display: flex; }
+.modal-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  width: 100%; max-width: 380px;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.modal-card h2 {
+  font-family: var(--font-title);
+  font-size: 20px;
+  color: var(--blue);
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+.modal-card p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+.form-group { margin-bottom: 14px; }
+.form-group label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); display: block; margin-bottom: 6px; }
+.form-group input {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 16px; color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-group input:focus { border-color: var(--blue); }
+.form-group input::placeholder { color: var(--muted); }
+
+/* === PRE-ROUND BRIEFING === */
+#screen-briefing {
+  background: var(--blue);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  cursor: pointer;
+}
+.briefing-round {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.briefing-text {
+  font-size: clamp(18px, 5vw, 24px);
+  color: white;
+  font-weight: 700;
+  line-height: 1.4;
+  max-width: 340px;
+}
+.briefing-tap {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 40px;
+  letter-spacing: 1px;
+}
+.briefing-progress {
+  position: absolute; bottom: 0; left: 0;
+  height: 3px;
+  background: var(--yellow);
+  transition: width 0.05s linear;
+}
+
+/* === GAME SCREEN === */
+#screen-game {
+  background: var(--bg);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+#screen-game.active { display: flex; }
+
+.game-topbar {
+  background: var(--blue);
+  color: white;
+  padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.game-puzzle-id {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 1px;
+}
+.game-round-indicator {
+  display: flex; gap: 6px; align-items: center;
+}
+.round-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  transition: background 0.2s;
+}
+.round-dot.active { background: var(--yellow); }
+.round-dot.done { background: rgba(255,255,255,0.6); }
+
+.timer-bar-wrap {
+  height: 5px; background: rgba(26,82,118,0.1); flex-shrink: 0;
+  position: relative;
+}
+.timer-bar {
+  height: 100%; width: 100%;
+  background: var(--green);
+  transition: width 0.1s linear, background 0.3s;
+  transform-origin: left;
+}
+.timer-bar.warn { background: var(--yellow); }
+.timer-bar.danger { background: var(--orange); }
+.timer-bar.critical { background: var(--red); }
+
+.reference-panel {
+  background: var(--blue-light);
+  padding: 10px 14px;
+  flex-shrink: 0;
+  max-height: 110px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  border-bottom: 1px solid rgba(26,82,118,0.1);
+}
+.ref-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--blue);
+  margin-bottom: 6px; opacity: 0.7;
+}
+.ref-table {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.ref-item {
+  background: white;
+  border: 1px solid rgba(26,82,118,0.12);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.4;
+}
+.ref-item .ref-slot { font-weight: 700; color: var(--blue); }
+.ref-item .ref-sku { color: var(--muted); font-size: 10px; }
+
+.game-grid-wrap {
+  flex: 1; overflow-y: auto; padding: 10px;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  min-height: 0; /* critical: lets flex child scroll instead of expanding */
+}
+.game-grid {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Grid cell */
+.cell {
+  background: var(--card);
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  box-shadow: var(--shadow);
+  padding: 7px 8px 6px;
+  cursor: pointer;
+  position: relative;
+  touch-action: manipulation;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  min-height: 82px;
+  display: flex; flex-direction: column; gap: 1px;
+  overflow: hidden;
+}
+@media (hover: hover) {
+  .cell:hover { transform: scale(1.02); box-shadow: var(--shadow-md); }
+}
+.cell:active { transform: scale(0.96); }
+.cell.flagged { border-color: var(--yellow); box-shadow: 0 0 0 1px var(--yellow), var(--shadow); }
+.cell.resolved-found { border-color: var(--green); cursor: default; }
+.cell.resolved-missed { border-color: var(--red); cursor: default; }
+.cell.resolved-false { border-color: var(--orange); cursor: default; }
+.cell.resolved-clean { opacity: 0.55; cursor: default; }
+.cell.empty-cell { background: #f5f4f0; opacity: 0.6; }
+
+.cell-bay {
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--muted);
+  line-height: 1;
+}
+.cell-badge-row {
+  position: absolute; top: 7px; right: 7px;
+  display: flex; gap: 3px; align-items: center;
+}
+.cell-badge {
+  font-size: 13px; line-height: 1;
+}
+.cell-flag-badge {
+  position: absolute; top: -6px; right: -6px;
+  width: 18px; height: 18px;
+  background: var(--yellow);
+  color: var(--blue);
+  font-weight: 900;
+  font-size: 12px;
+  border-radius: 50%;
+  display: none; align-items: center; justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  z-index: 2;
+}
+.cell.flagged .cell-flag-badge { display: flex; }
+.cell-sku {
+  font-family: var(--font-mono);
+  font-size: 11px; color: var(--muted);
+  margin-top: 1px;
+}
+.cell-qty {
+  font-family: var(--font-mono);
+  font-size: 22px; font-weight: 700;
+  color: var(--text); line-height: 1.1;
+}
+.cell-qty-label { font-size: 10px; color: var(--muted); font-weight: 400; }
+.cell-extra {
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--muted);
+  line-height: 1.5;
+}
+.cell-resolve-label {
+  position: absolute; bottom: 5px; right: 6px;
+  font-size: 9px; font-weight: 800; letter-spacing: 0.5px;
+  text-transform: uppercase; display: none;
+}
+.cell.resolved-found .cell-resolve-label { display: block; color: var(--green); }
+.cell.resolved-missed .cell-resolve-label { display: block; color: var(--red); }
+.cell.resolved-false .cell-resolve-label { display: block; color: var(--orange); }
+.cell-check {
+  position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+  font-size: 18px; display: none;
+  animation: popIn 0.2s ease;
+}
+@keyframes popIn {
+  from { transform: translateX(-50%) scale(0.3); opacity: 0; }
+  to { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+.cell.resolved-found .cell-check { display: block; }
+.cell-miss-highlight { color: var(--red) !important; font-weight: 700 !important; }
+
+.game-submit-wrap {
+  padding: 10px 12px;
+  flex-shrink: 0;
+  padding-bottom: calc(10px + var(--safe-bottom));
+}
+.btn-submit {
+  width: 100%; min-height: 56px;
+  background: var(--blue);
+  color: white;
+  font-weight: 800; font-size: 16px;
+  letter-spacing: 2px; text-transform: uppercase;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
+}
+.btn-submit:active { transform: scale(0.98); box-shadow: var(--shadow); }
+.btn-submit:disabled { background: var(--muted); cursor: default; transform: none; }
+
+/* === ROUND SCORECARD OVERLAY === */
+#overlay-scorecard {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: none; align-items: center; justify-content: center;
+  z-index: 50; padding: 24px;
+  cursor: pointer;
+}
+#overlay-scorecard.active { display: flex; }
+.scorecard-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  width: 100%; max-width: 340px;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.2s ease;
+  text-align: center;
+}
+.scorecard-round {
+  font-family: var(--font-mono);
+  font-size: 12px; letter-spacing: 2px;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.scorecard-type {
+  font-family: var(--font-title);
+  font-size: 20px; color: var(--blue);
+  letter-spacing: 1px; margin-bottom: 16px;
+}
+.scorecard-row {
+  display: flex; justify-content: space-between;
+  font-size: 14px; padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.scorecard-row:last-of-type { border-bottom: none; }
+.scorecard-label { color: var(--muted); }
+.scorecard-value { font-weight: 700; color: var(--text); }
+.scorecard-total {
+  margin-top: 12px; padding-top: 12px;
+  border-top: 2px solid var(--text);
+  display: flex; justify-content: space-between;
+  font-size: 20px; font-weight: 800;
+}
+.scorecard-tap { font-size: 11px; color: var(--muted); margin-top: 16px; }
+
+/* === END SCREEN === */
+#screen-end {
+  background: var(--bg);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 16px;
+  gap: 12px;
+}
+.end-report {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.end-report-header {
+  background: var(--blue);
+  padding: 20px;
+  color: white;
+}
+.end-report-header h3 {
+  font-family: var(--font-mono);
+  font-size: 13px; letter-spacing: 1px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 2px;
+}
+.end-report-header h2 {
+  font-family: var(--font-title);
+  font-size: 22px; letter-spacing: 1.5px;
+}
+.end-accuracy-title {
+  margin-top: 10px;
+  font-family: var(--font-title);
+  font-size: 28px; letter-spacing: 2px;
+  color: var(--yellow); line-height: 1.1;
+}
+.end-manager-line {
+  font-size: 12px; color: rgba(255,255,255,0.65);
+  font-style: italic; margin-top: 4px; line-height: 1.4;
+}
+.end-summary {
+  padding: 16px 20px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.end-stat { text-align: center; }
+.end-stat-val {
+  font-family: var(--font-mono);
+  font-size: 28px; font-weight: 700; color: var(--text);
+  line-height: 1;
+}
+.end-stat-val.green { color: var(--green); }
+.end-stat-val.red { color: var(--red); }
+.end-stat-label {
+  font-size: 11px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-top: 3px;
+}
+.end-breakdown {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.end-breakdown h4 {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+}
+.breakdown-row {
+  display: flex; align-items: center;
+  gap: 10px; margin-bottom: 7px; font-size: 13px;
+}
+.breakdown-label { color: var(--muted); width: 28px; font-family: var(--font-mono); font-size: 11px; }
+.breakdown-dots { display: flex; gap: 4px; flex: 1; }
+.breakdown-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--border);
+}
+.breakdown-dot.found { background: var(--green); }
+.breakdown-dot.missed { background: var(--border); }
+.breakdown-score {
+  font-family: var(--font-mono);
+  font-size: 12px; color: var(--text); font-weight: 600;
+  min-width: 50px; text-align: right;
+}
+.end-bonuses {
+  padding: 12px 20px;
+}
+.end-bonus-row {
+  display: flex; justify-content: space-between;
+  font-size: 13px; padding: 5px 0;
+}
+.end-bonus-label { color: var(--muted); }
+.end-bonus-val { font-weight: 700; color: var(--green); font-family: var(--font-mono); }
+.end-total-row {
+  display: flex; justify-content: space-between;
+  font-size: 20px; font-weight: 800;
+  padding-top: 10px; margin-top: 6px;
+  border-top: 2px solid var(--text);
+}
+.end-total-val { font-family: var(--font-mono); color: var(--blue); }
+
+.end-actions {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px; padding: 0 4px;
+}
+.btn-end-action {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 8px;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--text); text-align: center;
+  transition: background 0.1s, transform 0.1s;
+}
+.btn-end-action:active { background: var(--bg); transform: scale(0.97); }
+.btn-end-action.primary-action {
+  background: var(--yellow); border-color: var(--yellow);
+  color: var(--blue);
+}
+
+/* Gather AI insight card */
+.gather-card {
+  position: fixed;
+  bottom: calc(-200px - var(--safe-bottom));
+  left: 0; right: 0;
+  background: var(--blue);
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 20px 20px calc(20px + var(--safe-bottom));
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+  z-index: 40;
+  transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.gather-card.visible { bottom: 0; }
+.gather-card-close {
+  position: absolute; top: 12px; right: 14px;
+  font-size: 18px; color: rgba(255,255,255,0.5);
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+}
+.gather-card-logo {
+  font-size: 10px; font-weight: 800; letter-spacing: 2px;
+  color: var(--yellow); text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.gather-card-text {
+  font-size: 14px; color: rgba(255,255,255,0.9);
+  line-height: 1.5; margin-bottom: 14px;
+}
+.btn-gather-cta {
+  background: var(--yellow);
+  color: var(--blue);
+  font-weight: 800; font-size: 13px;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 13px 20px; border-radius: var(--radius-sm);
+  width: 100%;
+}
+
+/* === STATS SCREEN === */
+#screen-stats {
+  background: var(--bg);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 20px;
+}
+.stats-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.stats-title {
+  font-family: var(--font-title);
+  font-size: 22px; color: var(--blue); letter-spacing: 2px;
+}
+.stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px; margin-bottom: 16px;
+}
+.stat-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px 10px; text-align: center;
+  box-shadow: var(--shadow);
+}
+.stat-card-val {
+  font-family: var(--font-mono);
+  font-size: 26px; font-weight: 700; color: var(--blue);
+}
+.stat-card-label {
+  font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+.history-table { display: flex; flex-direction: column; gap: 6px; }
+.history-row {
+  background: var(--card);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex; align-items: center;
+  gap: 10px; font-size: 13px;
+  box-shadow: var(--shadow);
+}
+.history-date { font-family: var(--font-mono); font-size: 11px; color: var(--muted); flex: 1; }
+.history-score { font-weight: 700; color: var(--text); font-family: var(--font-mono); min-width: 60px; text-align: right; }
+.history-acc { font-size: 11px; color: var(--muted); min-width: 40px; text-align: right; }
+
+/* === TOAST === */
+.toast {
+  position: fixed; bottom: calc(80px + var(--safe-bottom));
+  left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--text); color: white;
+  padding: 10px 20px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+  opacity: 0; transition: opacity 0.2s, transform 0.2s;
+  z-index: 200; white-space: nowrap;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* === ANIMATIONS === */
+@keyframes cellPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+@keyframes flashRed {
+  0%, 100% { background: var(--card); }
+  50% { background: #fde8e6; }
+}
+@keyframes flashGreen {
+  0%, 100% { background: var(--card); }
+  50% { background: #eafaf1; }
+}
+@keyframes flashOrange {
+  0%, 100% { background: var(--card); }
+  50% { background: #fef5e7; }
+}
+.animate-pulse { animation: cellPulse 0.15s ease; }
+.animate-flash-red { animation: flashRed 0.6s ease 2; }
+.animate-flash-green { animation: flashGreen 0.4s ease; }
+.animate-flash-orange { animation: flashOrange 0.4s ease; }
+
+/* === COLUMN-DENSITY SCALING === */
+/* 5-col: cells ~64px wide on 375px screen */
+.game-grid.cols-5 .cell { padding: 6px 7px 5px; min-height: 78px; }
+.game-grid.cols-5 .cell-qty { font-size: 18px; }
+.game-grid.cols-5 .cell-badge { font-size: 11px; }
+.game-grid.cols-5 .cell-sku { font-size: 10px; }
+
+/* 6-col: cells ~50px wide on 375px screen */
+.game-grid.cols-6 .cell { padding: 5px 6px 4px; min-height: 74px; gap: 0; }
+.game-grid.cols-6 .cell-qty { font-size: 16px; }
+.game-grid.cols-6 .cell-badge { font-size: 10px; }
+.game-grid.cols-6 .cell-sku { font-size: 9px; }
+.game-grid.cols-6 .cell-extra { font-size: 8.5px; }
+.game-grid.cols-6 .cell-bay { font-size: 8.5px; }
+.game-grid.cols-6 .cell-flag-badge { width: 15px; height: 15px; font-size: 10px; top: -5px; right: -5px; }
+
+/* Small phones (< 360px) */
+@media (max-width: 359px) {
+  .game-grid.cols-5 .cell-qty { font-size: 16px; }
+  .game-grid.cols-6 .cell-qty { font-size: 14px; }
+  .reference-panel { max-height: 90px; }
+}
+
+/* === LANDSCAPE === */
+@media (orientation: landscape) and (max-height: 500px) {
+  #screen-game { flex-direction: column; }
+  .game-topbar { padding: 6px 16px; }
+  .reference-panel { max-height: 70px; padding: 6px 14px; }
+  .ref-label { margin-bottom: 3px; }
+  .game-grid-wrap { padding: 6px 10px; }
+  .game-submit-wrap { padding: 6px 12px; }
+  .btn-submit { min-height: 44px; font-size: 14px; }
+}
+
+/* === UTILITY === */
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- TITLE SCREEN -->
+<div id="screen-title" class="screen active">
+  <div class="title-bg"></div>
+  <div class="title-mute-wrap">
+    <button class="btn-mute" id="btn-mute" onclick="toggleMute()" aria-label="Toggle sound">🔊</button>
+  </div>
+  <div class="title-logo-wrap">
+    <div class="title-logo">SPOT CHECK</div>
+    <div class="title-tagline">Find the errors. Beat the clock. Prove you know the floor.</div>
+  </div>
+  <div class="title-meta">
+    <div class="title-puzzle-num" id="title-puzzle-num">#1 — Apr 19, 2026</div>
+    <div class="title-streak" id="title-streak-wrap">
+      <span class="flame">🔥</span>
+      <span class="title-streak-count" id="title-streak-count">0</span>
+      <span>-day streak</span>
+    </div>
+  </div>
+  <div id="title-already-played" class="title-already-played hidden"></div>
+  <div class="title-menu">
+    <button class="btn-primary" id="btn-start" onclick="onStartGame()">START TODAY'S AUDIT</button>
+    <button class="btn-secondary" onclick="showScreen('howtoplay')">HOW TO PLAY</button>
+    <button class="btn-secondary" onclick="showScreen('stats')">MY STATS</button>
+    <button class="btn-secondary" onclick="alert('Leaderboard coming soon!')">LEADERBOARD</button>
+  </div>
+</div>
+
+<!-- HOW TO PLAY SCREEN -->
+<div id="screen-howtoplay" class="screen">
+  <div class="modal-header">
+    <div class="modal-title">HOW TO PLAY</div>
+    <button class="btn-close" onclick="showScreen('title')">✕</button>
+  </div>
+  <div class="htp-body">
+    <p class="htp-intro">You're the night auditor. Each round shows a warehouse bay with inventory data. Some locations have errors.</p>
+    <ol class="htp-rules">
+      <li><span class="htp-num">1</span><span><strong>TAP</strong> locations you think have errors to flag them</span></li>
+      <li><span class="htp-num">2</span><span>Hit <strong>SUBMIT</strong> — or let the timer run out</span></li>
+      <li><span class="htp-num">3</span><span>Correct finds = <strong>+100 pts</strong>. Wrong flags = <strong>−50 pts</strong>. Speed bonus for time left.</span></li>
+      <li><span class="htp-num">4</span><span><strong>Five rounds</strong>. One daily puzzle. Beat your streak.</span></li>
+    </ol>
+  </div>
+  <div class="htp-errors">
+    <h3>Error Types</h3>
+    <span class="error-tag">Wrong Count</span>
+    <span class="error-tag">Wrong Slot</span>
+    <span class="error-tag">FIFO Violation</span>
+    <span class="error-tag">Phantom Inventory</span>
+    <span class="error-tag">Weight Violation</span>
+    <span class="error-tag">Zone Violation</span>
+  </div>
+  <p style="font-size:12px;color:var(--muted);text-align:center;padding:4px 0 8px;">The better you know warehouses, the faster you'll spot them.</p>
+  <button class="btn-primary" onclick="showScreen('title')">GOT IT</button>
+</div>
+
+<!-- PRE-ROUND BRIEFING SCREEN -->
+<div id="screen-briefing" class="screen" onclick="skipBriefing()">
+  <div class="briefing-round" id="briefing-round-label">ROUND 1 OF 5</div>
+  <div class="briefing-text" id="briefing-text">Receiving Dock: Verify the inbound against the manifest.</div>
+  <div class="briefing-tap">TAP TO SKIP</div>
+  <div class="briefing-progress" id="briefing-progress" style="width:100%"></div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="screen-game" class="screen">
+  <div class="game-topbar">
+    <div class="game-puzzle-id" id="game-puzzle-id">SPOT CHECK #1</div>
+    <div class="game-round-indicator" id="game-round-dots"></div>
+  </div>
+  <div class="timer-bar-wrap">
+    <div class="timer-bar" id="timer-bar"></div>
+  </div>
+  <div class="reference-panel">
+    <div class="ref-label">Reference — <span id="ref-round-type">WMS Manifest</span></div>
+    <div class="ref-table" id="ref-table"></div>
+  </div>
+  <div class="game-grid-wrap">
+    <div class="game-grid" id="game-grid"></div>
+  </div>
+  <div class="game-submit-wrap">
+    <button class="btn-submit" id="btn-submit" onclick="submitRound()">SUBMIT ROUND</button>
+  </div>
+</div>
+
+<!-- ROUND SCORECARD OVERLAY -->
+<div id="overlay-scorecard" class="overlay" onclick="dismissScorecard()">
+  <div class="scorecard-card" onclick="event.stopPropagation()">
+    <div class="scorecard-round" id="sc-round">ROUND 1</div>
+    <div class="scorecard-type" id="sc-type">RECEIVING DOCK</div>
+    <div class="scorecard-row"><span class="scorecard-label">Errors found</span><span class="scorecard-value" id="sc-found">0/2</span></div>
+    <div class="scorecard-row"><span class="scorecard-label">False flags</span><span class="scorecard-value" id="sc-false">0</span></div>
+    <div class="scorecard-row"><span class="scorecard-label">Time bonus</span><span class="scorecard-value" id="sc-time">+0</span></div>
+    <div class="scorecard-total"><span>ROUND SCORE</span><span id="sc-total">0</span></div>
+    <div class="scorecard-tap">Tap anywhere to continue</div>
+  </div>
+</div>
+
+<!-- END SCREEN -->
+<div id="screen-end" class="screen">
+  <div class="end-report">
+    <div class="end-report-header">
+      <h3 id="end-puzzle-header">SPOT CHECK #1 — Apr 19, 2026</h3>
+      <h2 id="end-facility">DC-42 Memphis</h2>
+      <div class="end-accuracy-title" id="end-title">AUDIT COMPLETE</div>
+      <div class="end-manager-line" id="end-tagline"></div>
+    </div>
+    <div class="end-summary">
+      <div class="end-stat">
+        <div class="end-stat-val green" id="end-found">0/14</div>
+        <div class="end-stat-label">Errors Found</div>
+      </div>
+      <div class="end-stat">
+        <div class="end-stat-val" id="end-false">0</div>
+        <div class="end-stat-label">False Flags</div>
+      </div>
+      <div class="end-stat">
+        <div class="end-stat-val" id="end-accuracy">0%</div>
+        <div class="end-stat-label">Accuracy</div>
+      </div>
+      <div class="end-stat">
+        <div class="end-stat-val" id="end-streak-display">0</div>
+        <div class="end-stat-label">Day Streak</div>
+      </div>
+    </div>
+    <div class="end-breakdown">
+      <h4>Round Breakdown</h4>
+      <div id="end-breakdown-rows"></div>
+    </div>
+    <div class="end-bonuses">
+      <div id="end-bonus-rows"></div>
+      <div class="end-total-row">
+        <span>TOTAL</span>
+        <span class="end-total-val" id="end-total-score">0</span>
+      </div>
+    </div>
+  </div>
+  <div class="end-actions">
+    <button class="btn-end-action primary-action" onclick="shareResult()">SHARE</button>
+    <button class="btn-end-action" onclick="alert('Leaderboard coming soon!')">LEADERBOARD</button>
+    <button class="btn-end-action" onclick="showScreen('stats')">MY STATS</button>
+  </div>
+</div>
+
+<!-- STATS SCREEN -->
+<div id="screen-stats" class="screen">
+  <div class="stats-header">
+    <div class="stats-title">MY STATS</div>
+    <button class="btn-close" onclick="showScreen('title')">✕</button>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card-val" id="stat-streak">0</div>
+      <div class="stat-card-label">Current Streak</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-val" id="stat-best-streak">0</div>
+      <div class="stat-card-label">Best Streak</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-val" id="stat-best-score">—</div>
+      <div class="stat-card-label">Best Score</div>
+    </div>
+  </div>
+  <div class="history-table" id="stats-history"></div>
+</div>
+
+<!-- NAME ENTRY OVERLAY -->
+<div id="overlay-name" class="overlay">
+  <div class="modal-card">
+    <h2>WHAT'S YOUR NAME?</h2>
+    <p>Your name appears on the leaderboard and your share card. Just a first name is fine.</p>
+    <div class="form-group">
+      <label>Display Name (3–16 chars)</label>
+      <input type="text" id="input-name" placeholder="e.g. Xavier S." maxlength="16" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Company (optional)</label>
+      <input type="text" id="input-company" placeholder="e.g. Gather AI" maxlength="30" autocomplete="off">
+    </div>
+    <button class="btn-primary" onclick="saveName()" style="margin-top:8px">LET'S GO</button>
+  </div>
+</div>
+
+<!-- GATHER AI INSIGHT CARD -->
+<div class="gather-card" id="gather-card">
+  <button class="gather-card-close" onclick="dismissGatherCard()">✕</button>
+  <div class="gather-card-logo">GATHER AI</div>
+  <div class="gather-card-text" id="gather-card-text">You found errors in seconds. A Gather AI drone audits 200 bays in that time — every day, with 99%+ accuracy.</div>
+  <button class="btn-gather-cta" onclick="openGatherCTA()">SEE HOW IT WORKS</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// === CONFIG ===
+const LAUNCH_DATE = new Date('2026-05-01');
+const GATHER_CTA_URL = 'https://gather.ai/demo?utm_source=spotcheck&utm_medium=game&utm_campaign=post-game';
+const SHARE_URL = 'gather.ai/spotcheck';
+
+const ROUND_TYPES = ['Receiving Dock', 'Pick Face', 'Bulk Storage', 'Staging Lane', 'Full Floor'];
+const ROUND_BRIEFINGS = [
+  'Receiving Dock: Verify the inbound against the manifest.',
+  'Pick Face: Check the forward pick locations.',
+  'Bulk Storage: Audit the reserve inventory.',
+  'Staging Lane: Validate outbound orders.',
+  'Full Floor: The auditor is here. Find everything.'
+];
+const ROUND_GRID_SIZES = [
+  {cols: 4, rows: 3},
+  {cols: 4, rows: 3},
+  {cols: 5, rows: 4},
+  {cols: 5, rows: 4},
+  {cols: 6, rows: 4}
+];
+const ROUND_ERRORS = [2, 2, 3, 3, 4];
+const ROUND_TIMERS = [20, 20, 25, 25, 30];
+const BADGE_ICONS = { cold: '❄️', hazmat: '🔶', perishable: '🌿', standard: '📦', highvalue: '💎' };
+const BADGE_LABELS = { cold: 'cold', hazmat: 'hazmat', perishable: 'perishable', standard: 'standard', highvalue: 'high-value' };
+
+// Error types available per round complexity
+const ERROR_TYPES_SIMPLE   = ['countMismatch', 'wrongSlot'];
+const ERROR_TYPES_MEDIUM   = ['countMismatch', 'wrongSlot', 'fifoViolation', 'phantomInventory'];
+const ERROR_TYPES_HARD     = ['countMismatch', 'wrongSlot', 'fifoViolation', 'phantomInventory', 'weightViolation', 'zoneViolation'];
+
+// Facility names
+const FACILITY_NAMES = ['DC-42 Memphis','DC-07 Dallas','DC-18 Columbus','DC-31 Louisville','DC-55 Phoenix','DC-12 Atlanta','DC-29 Indianapolis','DC-63 Charlotte','DC-04 Denver','DC-48 Kansas City','DC-22 Nashville','DC-37 Pittsburgh'];
+
+// SKU pool (200 codes simplified to unique 4-digit numbers)
+const SKU_POOL = Array.from({length: 200}, (_, i) => `SKU-${String(1001 + i * 37 % 9000).padStart(4,'0')}`);
+const STD_QTY_MAP = {};
+SKU_POOL.forEach((sku, i) => { STD_QTY_MAP[sku] = [48,60,72,96,120][i % 5]; });
+const BADGE_TYPES = ['cold','hazmat','perishable','standard','standard','standard','highvalue'];
+
+// === PRNG ===
+function mulberry32(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function dateToSeed(dateStr) {
+  const s = 'spotcheck-' + dateStr;
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+  }
+  return h >>> 0;
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function puzzleNumber(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  const diff = Math.floor((d - LAUNCH_DATE) / 86400000) + 1;
+  return Math.max(1, diff);
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+}
+
+// === GAME STATE ===
+let gameState = {
+  date: '',
+  puzzleNum: 1,
+  facilityName: '',
+  round: 0,          // 0-based index
+  scores: [],        // per-round score
+  roundsData: [],    // per-round flags/results
+  puzzle: null,
+  submitted: false,
+  playerName: '',
+  playerCompany: '',
+  streak: 0
+};
+
+let timerInterval = null;
+let timerSeconds = 0;
+let briefingTimeout = null;
+let prng = null;
+
+// === PUZZLE GENERATOR ===
+function generatePuzzle(dateStr) {
+  const seed = dateToSeed(dateStr);
+  prng = mulberry32(seed);
+  const rng = prng;
+
+  function ri(min, max) { return Math.floor(rng() * (max - min + 1)) + min; }
+  function pick(arr) { return arr[Math.floor(rng() * arr.length)]; }
+  function pickN(arr, n) {
+    const copy = [...arr];
+    const out = [];
+    for (let i = 0; i < n && copy.length; i++) {
+      const idx = Math.floor(rng() * copy.length);
+      out.push(copy.splice(idx, 1)[0]);
+    }
+    return out;
+  }
+
+  const facilityName = pick(FACILITY_NAMES);
+  const puzzleSkus = pickN(SKU_POOL, 40); // working SKU pool for this puzzle
+  const skuBadges = {};
+  puzzleSkus.forEach(sku => { skuBadges[sku] = BADGE_TYPES[Math.floor(rng() * BADGE_TYPES.length)]; });
+
+  // Generate relative date helpers
+  const baseDate = new Date(dateStr + 'T00:00:00');
+  function expDate(daysOffset) {
+    const d = new Date(baseDate);
+    d.setDate(d.getDate() + daysOffset);
+    return d.toISOString().slice(0,10);
+  }
+  function lotCode() {
+    const n = ri(0,9);
+    const l = String.fromCharCode(65 + ri(0,25));
+    return `${n}${l}-${String(ri(0,999)).padStart(3,'0')}`;
+  }
+
+  const rounds = [];
+
+  for (let r = 0; r < 5; r++) {
+    const gs = ROUND_GRID_SIZES[r];
+    const totalCells = gs.cols * gs.rows;
+    const errorCount = ROUND_ERRORS[r];
+    const errorPool = r < 2 ? ERROR_TYPES_SIMPLE : r < 4 ? ERROR_TYPES_MEDIUM : ERROR_TYPES_HARD;
+    const roundType = ROUND_TYPES[r];
+
+    // Assign SKUs to cells
+    const cellSkus = Array.from({length: totalCells}, () => pick(puzzleSkus.slice(0, 20)));
+    const cellBadges = cellSkus.map(s => skuBadges[s] || 'standard');
+    const cellQtys = cellSkus.map(s => STD_QTY_MAP[s] || 48);
+    const cellExps = cellSkus.map(() => rng() > 0.5 ? expDate(ri(-14, 180)) : null);
+    const cellLots = cellSkus.map(() => rng() > 0.6 ? lotCode() : null);
+    const cellWeights = cellSkus.map(() => rng() > 0.5 ? ri(8, 28) * 100 : null);
+    const cellLevels = Array.from({length: totalCells}, (_, i) => (Math.floor(i / gs.cols) % 4) + 1);
+
+    // Bay IDs: letter = column, row, level
+    const letters = 'ABCDEF';
+    const bayIds = Array.from({length: totalCells}, (_, i) => {
+      const col = i % gs.cols;
+      const row = Math.floor(i / gs.cols);
+      return `${letters[col]}-${String(ri(1,20)).padStart(2,'0')}-${String(cellLevels[i]).padStart(2,'0')}`;
+    });
+
+    // Reference panel: expected state
+    const refItems = cellSkus.map((sku, i) => ({
+      slot: bayIds[i], sku, qty: cellQtys[i],
+      exp: cellExps[i], lot: cellLots[i]
+    }));
+
+    // Place errors — no adjacent errors
+    const errorCells = [];
+    const errorTypes = [];
+    const usedErrorTypes = new Set();
+    let attempts = 0;
+
+    while (errorCells.length < errorCount && attempts < 200) {
+      attempts++;
+      const idx = ri(0, totalCells - 1);
+      if (errorCells.includes(idx)) continue;
+      // Check adjacency
+      const adjOk = errorCells.every(e => {
+        const dr = Math.abs(Math.floor(idx/gs.cols) - Math.floor(e/gs.cols));
+        const dc = Math.abs((idx%gs.cols) - (e%gs.cols));
+        return dr + dc > 1;
+      });
+      if (!adjOk) continue;
+      // Pick error type not yet used this round
+      const available = errorPool.filter(t => !usedErrorTypes.has(t));
+      if (available.length === 0) break;
+      const et = pick(available);
+      usedErrorTypes.add(et);
+      errorCells.push(idx);
+      errorTypes.push(et);
+    }
+
+    // Build cells with errors applied
+    const cells = Array.from({length: totalCells}, (_, i) => {
+      const errIdx = errorCells.indexOf(i);
+      const hasError = errIdx !== -1;
+      const errorType = hasError ? errorTypes[errIdx] : null;
+      const level = cellLevels[i];
+      const badge = cellBadges[i];
+
+      let qty = cellQtys[i];
+      let sku = cellSkus[i];
+      let exp = cellExps[i];
+      let lot = cellLots[i];
+      let weight = cellWeights[i];
+      let isEmpty = false;
+      let isError = hasError;
+      let errorDesc = '';
+
+      if (hasError) {
+        if (errorType === 'countMismatch') {
+          const devs = [-24, -12, 12, 24, -36, 36];
+          qty = Math.max(1, qty + pick(devs));
+          errorDesc = `Expected ${cellQtys[i]}, shows ${qty}`;
+        } else if (errorType === 'wrongSlot') {
+          // Swap SKU with a neighbor's expected SKU
+          const swapSku = pick(puzzleSkus.filter(s => s !== sku).slice(0, 10));
+          sku = swapSku;
+          errorDesc = `Wrong SKU — expected ${cellSkus[i]}`;
+        } else if (errorType === 'fifoViolation') {
+          exp = expDate(ri(60, 120)); // newer (farther out) = violation
+          errorDesc = 'FIFO violation — newer stock in front';
+        } else if (errorType === 'phantomInventory') {
+          isEmpty = true;
+          errorDesc = 'Phantom — marked EMPTY but shows qty';
+        } else if (errorType === 'weightViolation') {
+          weight = ri(21, 28) * 100; // >2000 lbs
+          errorDesc = `${weight.toLocaleString()} lbs on level ${level} — violation`;
+        } else if (errorType === 'zoneViolation') {
+          // Force cold badge but this is an ambient bay
+          errorDesc = 'Zone violation — frozen SKU in ambient bay';
+        }
+      }
+
+      return {
+        id: i, bayId: bayIds[i], sku: isError && errorType==='wrongSlot' ? sku : cellSkus[i],
+        displaySku: sku,
+        qty, exp: exp ? exp : null,
+        lot, weight, badge: isError && errorType==='zoneViolation' ? 'cold' : badge,
+        level, isEmpty, isError, errorType, errorDesc,
+        refQty: cellQtys[i], refSku: cellSkus[i]
+      };
+    });
+
+    rounds.push({
+      type: roundType, briefing: ROUND_BRIEFINGS[r],
+      gridSize: gs, cells, refItems, errorCells, errorTypes
+    });
+  }
+
+  return { seed, date: dateStr, puzzleNumber: puzzleNumber(dateStr), facilityName, rounds };
+}
+
+// === SCREEN ROUTER ===
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + id);
+  if (el) el.classList.add('active');
+}
+
+// === PERSISTENCE ===
+function lsGet(key, def) {
+  try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : def; } catch { return def; }
+}
+function lsSet(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+}
+
+function getPlayer() {
+  return lsGet('spotcheck_player', {name:'', company:''});
+}
+function getStreak() {
+  return lsGet('spotcheck_streak', {count:0, lastPlayed:'', freezeAvailable:false, freezeUsed:false});
+}
+function getHistory() {
+  return lsGet('spotcheck_history', []);
+}
+function getTodayCompletion() {
+  return lsGet('spotcheck_completed_' + todayStr(), null);
+}
+function isMuted() {
+  return lsGet('spotcheck_mute', false);
+}
+
+function checkAndUpdateStreak() {
+  const streak = getStreak();
+  const today = todayStr();
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.getFullYear() + '-' + String(yesterday.getMonth()+1).padStart(2,'0') + '-' + String(yesterday.getDate()).padStart(2,'0');
+
+  if (streak.lastPlayed === today) return streak; // already played today
+
+  if (streak.lastPlayed === yesterdayStr) {
+    // Consecutive — just flag ready
+    return streak;
+  } else if (streak.lastPlayed !== '') {
+    // Missed at least one day
+    if (streak.count >= 7 && streak.freezeAvailable && !streak.freezeUsed) {
+      streak.freezeUsed = true;
+      streak.freezeAvailable = false;
+      lsSet('spotcheck_streak', streak);
+    } else if (streak.lastPlayed !== yesterday) {
+      // Break it
+      streak.count = 0;
+      streak.freezeUsed = false;
+      streak.freezeAvailable = false;
+      lsSet('spotcheck_streak', streak);
+    }
+  }
+  return streak;
+}
+
+function incrementStreak() {
+  const streak = getStreak();
+  const today = todayStr();
+  if (streak.lastPlayed === today) return streak;
+  streak.count++;
+  streak.lastPlayed = today;
+  if (streak.count >= 7) streak.freezeAvailable = true;
+  lsSet('spotcheck_streak', streak);
+  return streak;
+}
+
+function saveCompletion(score, errorsFound, falseFlags, accuracy, roundScores) {
+  const today = todayStr();
+  lsSet('spotcheck_completed_' + today, {score, errorsFound, falseFlags, accuracy, puzzleNumber: gameState.puzzleNum, roundScores});
+  // History
+  const history = getHistory();
+  history.unshift({date: today, score, accuracy, streak: getStreak().count});
+  if (history.length > 30) history.pop();
+  lsSet('spotcheck_history', history);
+}
+
+function saveProgress() {
+  lsSet('spotcheck_inprogress_' + todayStr(), {
+    round: gameState.round,
+    scores: gameState.scores,
+    roundsData: gameState.roundsData
+  });
+}
+
+function clearProgress() {
+  localStorage.removeItem('spotcheck_inprogress_' + todayStr());
+}
+
+// === TITLE SCREEN ===
+function initTitleScreen() {
+  const today = todayStr();
+  const pNum = puzzleNumber(today);
+  document.getElementById('title-puzzle-num').textContent = `#${pNum} — ${formatDate(today)}`;
+
+  const streak = checkAndUpdateStreak();
+  const streakWrap = document.getElementById('title-streak-wrap');
+  if (streak.count > 0) {
+    document.getElementById('title-streak-count').textContent = streak.count;
+    streakWrap.style.display = 'flex';
+  } else {
+    streakWrap.style.display = 'none';
+  }
+
+  const completed = getTodayCompletion();
+  const alreadyEl = document.getElementById('title-already-played');
+  const startBtn = document.getElementById('btn-start');
+
+  if (completed) {
+    alreadyEl.textContent = `Score: ${completed.score.toLocaleString()} pts — COME BACK TOMORROW`;
+    alreadyEl.classList.remove('hidden');
+    startBtn.classList.add('already-played');
+    startBtn.textContent = "ALREADY AUDITED TODAY";
+    startBtn.onclick = null;
+  } else if (streak.freezeUsed) {
+    alreadyEl.textContent = "STREAK SAVED — don't miss again!";
+    alreadyEl.classList.remove('hidden');
+  } else if (streak.count === 0 && streak.lastPlayed !== '') {
+    alreadyEl.textContent = "STREAK: 0 — Start a new one today";
+    alreadyEl.classList.remove('hidden');
+  }
+
+  document.getElementById('btn-mute').textContent = isMuted() ? '🔇' : '🔊';
+}
+
+function onStartGame() {
+  const completed = getTodayCompletion();
+  if (completed) return;
+
+  const player = getPlayer();
+  if (!player.name) {
+    document.getElementById('overlay-name').classList.add('active');
+    return;
+  }
+  startGame();
+}
+
+function saveName() {
+  const name = document.getElementById('input-name').value.trim();
+  if (name.length < 3) { showToast('Name must be 3+ characters'); return; }
+  const company = document.getElementById('input-company').value.trim();
+  lsSet('spotcheck_player', {name, company});
+  gameState.playerName = name;
+  gameState.playerCompany = company;
+  document.getElementById('overlay-name').classList.remove('active');
+  startGame();
+}
+
+// === GAME LOOP ===
+function startGame() {
+  const today = todayStr();
+  const puzzle = generatePuzzle(today);
+  gameState.date = today;
+  gameState.puzzleNum = puzzle.puzzleNumber;
+  gameState.facilityName = puzzle.facilityName;
+  gameState.puzzle = puzzle;
+  gameState.round = 0;
+  gameState.scores = [];
+  gameState.roundsData = [];
+  gameState.submitted = false;
+
+  const player = getPlayer();
+  gameState.playerName = player.name;
+  gameState.playerCompany = player.company;
+  gameState.streak = getStreak().count;
+
+  // Check for in-progress save
+  const inprog = lsGet('spotcheck_inprogress_' + today, null);
+  if (inprog && inprog.round > 0) {
+    gameState.round = inprog.round;
+    gameState.scores = inprog.scores || [];
+    gameState.roundsData = inprog.roundsData || [];
+  }
+
+  document.getElementById('game-puzzle-id').textContent = `SPOT CHECK #${gameState.puzzleNum}`;
+  updateRoundDots();
+  startRound(gameState.round);
+}
+
+function updateRoundDots() {
+  const wrap = document.getElementById('game-round-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'round-dot' + (i === gameState.round ? ' active' : i < gameState.round ? ' done' : '');
+    wrap.appendChild(dot);
+  }
+}
+
+function startRound(roundIdx) {
+  const round = gameState.puzzle.rounds[roundIdx];
+  showBriefing(roundIdx, round);
+}
+
+function showBriefing(roundIdx, round) {
+  document.getElementById('briefing-round-label').textContent = `ROUND ${roundIdx+1} OF 5`;
+  document.getElementById('briefing-text').textContent = round.briefing;
+  showScreen('briefing');
+
+  let pct = 100;
+  const dur = 2000;
+  const step = 50;
+  const bar = document.getElementById('briefing-progress');
+  bar.style.width = '100%';
+
+  if (briefingTimeout) clearInterval(briefingTimeout);
+  const start = Date.now();
+  briefingTimeout = setInterval(() => {
+    const elapsed = Date.now() - start;
+    pct = Math.max(0, 100 - (elapsed / dur * 100));
+    bar.style.width = pct + '%';
+    if (elapsed >= dur) {
+      clearInterval(briefingTimeout);
+      briefingTimeout = null;
+      launchRound(roundIdx, round);
+    }
+  }, step);
+}
+
+function skipBriefing() {
+  if (briefingTimeout) { clearInterval(briefingTimeout); briefingTimeout = null; }
+  const round = gameState.puzzle.rounds[gameState.round];
+  launchRound(gameState.round, round);
+}
+
+function launchRound(roundIdx, round) {
+  showScreen('game');
+  updateRoundDots();
+
+  // Build reference panel
+  document.getElementById('ref-round-type').textContent = round.type;
+  const refTable = document.getElementById('ref-table');
+  refTable.innerHTML = '';
+  round.refItems.slice(0, 16).forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'ref-item';
+    div.innerHTML = `<span class="ref-slot">${item.slot}</span><br><span class="ref-sku">${item.sku} · ${item.qty}</span>`;
+    refTable.appendChild(div);
+  });
+
+  // Build grid
+  const grid = document.getElementById('game-grid');
+  grid.style.gridTemplateColumns = `repeat(${round.gridSize.cols}, 1fr)`;
+  grid.className = `game-grid cols-${round.gridSize.cols}`;
+  grid.innerHTML = '';
+  round.cells.forEach((cell, i) => renderCell(cell, i, round));
+
+  // Timer
+  startTimer(roundIdx);
+  sfxSubmit(false); // silent start
+}
+
+function renderCell(cell, i, round) {
+  const grid = document.getElementById('game-grid');
+  const div = document.createElement('div');
+  div.className = 'cell' + (cell.isEmpty ? ' empty-cell' : '');
+  div.id = `cell-${i}`;
+  div.dataset.idx = i;
+  div.onclick = () => tapCell(i);
+
+  div.innerHTML = `
+    <div class="cell-bay">${cell.bayId}</div>
+    <div class="cell-badge-row"><span class="cell-badge">${BADGE_ICONS[cell.badge] || '📦'}</span>${cell.isEmpty ? '<span style="font-size:9px;color:var(--red);font-weight:700;">EMPTY</span>' : ''}</div>
+    <div class="cell-flag-badge">!</div>
+    <div class="cell-sku">${cell.displaySku}</div>
+    <div><span class="cell-qty">${cell.qty}</span><span class="cell-qty-label"> units</span></div>
+    <div class="cell-extra">${cell.exp ? `EXP: ${cell.exp}<br>` : ''}${cell.lot ? `LOT: ${cell.lot}<br>` : ''}${cell.weight ? `${cell.weight.toLocaleString()} lbs` : ''}</div>
+    <div class="cell-check">✓</div>
+    <div class="cell-resolve-label" id="resolve-label-${i}"></div>
+  `;
+  grid.appendChild(div);
+}
+
+const flaggedCells = new Set();
+
+function tapCell(i) {
+  const round = gameState.puzzle.rounds[gameState.round];
+  if (!round) return;
+  const el = document.getElementById('cell-' + i);
+  if (!el || el.classList.contains('resolved-found') || el.classList.contains('resolved-missed') || el.classList.contains('resolved-false') || el.classList.contains('resolved-clean')) return;
+
+  if (flaggedCells.has(i)) {
+    flaggedCells.delete(i);
+    el.classList.remove('flagged');
+    sfxUntap();
+  } else {
+    flaggedCells.add(i);
+    el.classList.add('flagged');
+    el.classList.add('animate-pulse');
+    el.addEventListener('animationend', () => el.classList.remove('animate-pulse'), {once:true});
+    sfxTap();
+  }
+  saveProgress();
+}
+
+// === TIMER ===
+function startTimer(roundIdx) {
+  const duration = ROUND_TIMERS[roundIdx];
+  timerSeconds = duration;
+  const bar = document.getElementById('timer-bar');
+  bar.style.width = '100%';
+  bar.className = 'timer-bar';
+
+  if (timerInterval) clearInterval(timerInterval);
+  let tickWarned = false;
+  const startTime = Date.now();
+
+  timerInterval = setInterval(() => {
+    const elapsed = (Date.now() - startTime) / 1000;
+    const remaining = Math.max(0, duration - elapsed);
+    timerSeconds = remaining;
+    const pct = (remaining / duration) * 100;
+    bar.style.width = pct + '%';
+
+    if (remaining <= 5 && remaining > 0) {
+      bar.className = 'timer-bar critical';
+      if (!tickWarned) { sfxTimerWarning(); tickWarned = true; }
+    } else if (remaining <= 10) {
+      bar.className = 'timer-bar danger';
+    } else if (remaining <= duration * 0.4) {
+      bar.className = 'timer-bar warn';
+    }
+
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      submitRound();
+    }
+  }, 100);
+}
+
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+// === SUBMIT ===
+function submitRound() {
+  stopTimer();
+  sfxSubmit(true);
+  document.getElementById('btn-submit').disabled = true;
+
+  const roundIdx = gameState.round;
+  const round = gameState.puzzle.rounds[roundIdx];
+  const errorCells = new Set(round.errorCells);
+  const flagged = new Set(flaggedCells);
+
+  let correctFound = 0;
+  let falseFlags = 0;
+  const missed = [];
+  const foundList = [];
+  const falseFlagList = [];
+
+  flagged.forEach(i => {
+    if (errorCells.has(i)) { correctFound++; foundList.push(i); }
+    else { falseFlags++; falseFlagList.push(i); }
+  });
+  errorCells.forEach(i => { if (!flagged.has(i)) missed.push(i); });
+
+  const timeBonus = Math.floor(timerSeconds) * 5;
+  const perfectBonus = (correctFound === round.errorCells.length && falseFlags === 0) ? 50 : 0;
+  const roundScore = correctFound * 100 + timeBonus - falseFlags * 50 + perfectBonus;
+
+  gameState.scores.push(roundScore);
+  gameState.roundsData.push({correctFound, falseFlags, missed, found: foundList, falseFlagList, timeBonus, perfectBonus, total: roundScore});
+
+  // Animate resolution
+  resolveRound(round, foundList, missed, falseFlagList, () => {
+    showScorecard(roundIdx, correctFound, round.errorCells.length, falseFlags, timeBonus, perfectBonus, roundScore, () => {
+      flaggedCells.clear();
+      gameState.round++;
+      saveProgress();
+      if (gameState.round >= 5) {
+        clearProgress();
+        finishGame();
+      } else {
+        document.getElementById('btn-submit').disabled = false;
+        updateRoundDots();
+        startRound(gameState.round);
+      }
+    });
+  });
+}
+
+function resolveRound(round, found, missed, falseFlagged, callback) {
+  const total = round.cells.length;
+  const foundSet = new Set(found);
+  const missedSet = new Set(missed);
+  const falseSet = new Set(falseFlagged);
+
+  let delay = 0;
+  for (let i = 0; i < total; i++) {
+    ((idx) => {
+      setTimeout(() => {
+        const el = document.getElementById('cell-' + idx);
+        if (!el) return;
+        const labelEl = document.getElementById('resolve-label-' + idx);
+        if (foundSet.has(idx)) {
+          el.classList.add('resolved-found');
+          if (labelEl) labelEl.textContent = 'FOUND';
+          el.classList.add('animate-flash-green');
+          sfxCorrect();
+        } else if (missedSet.has(idx)) {
+          el.classList.add('resolved-missed');
+          if (labelEl) labelEl.textContent = 'MISSED';
+          el.classList.add('animate-flash-red');
+          // Highlight discrepancy
+          const qtyEl = el.querySelector('.cell-qty');
+          if (qtyEl) qtyEl.classList.add('cell-miss-highlight');
+          sfxMissed();
+        } else if (falseSet.has(idx)) {
+          el.classList.remove('flagged');
+          el.classList.add('resolved-false');
+          if (labelEl) labelEl.textContent = 'CLEAN';
+          el.classList.add('animate-flash-orange');
+          sfxFalseFlag();
+        } else {
+          el.classList.add('resolved-clean');
+        }
+        if (idx === total - 1) setTimeout(callback, 400);
+      }, delay);
+    })(i);
+    delay += 80;
+  }
+}
+
+function showScorecard(roundIdx, found, total, falseFlags, timeBonus, perfectBonus, roundScore, callback) {
+  document.getElementById('sc-round').textContent = `ROUND ${roundIdx + 1}`;
+  document.getElementById('sc-type').textContent = ROUND_TYPES[roundIdx].toUpperCase();
+  document.getElementById('sc-found').textContent = `${found}/${total}`;
+  document.getElementById('sc-false').textContent = falseFlags;
+  document.getElementById('sc-time').textContent = `+${timeBonus}`;
+  document.getElementById('sc-total').textContent = roundScore >= 0 ? roundScore : roundScore;
+
+  if (found === total && falseFlags === 0) sfxPerfectRound();
+
+  document.getElementById('overlay-scorecard').classList.add('active');
+  let dismissed = false;
+  const dismiss = () => {
+    if (dismissed) return;
+    dismissed = true;
+    document.getElementById('overlay-scorecard').classList.remove('active');
+    callback();
+  };
+  scorecardCallback = dismiss;
+  setTimeout(dismiss, 3000);
+}
+
+let scorecardCallback = null;
+function dismissScorecard() {
+  if (scorecardCallback) { scorecardCallback(); scorecardCallback = null; }
+}
+
+// === END GAME ===
+function finishGame() {
+  const streak = incrementStreak();
+  gameState.streak = streak.count;
+
+  let totalErrors = 0, totalFound = 0, totalFalse = 0;
+  const roundDotData = [];
+
+  gameState.roundsData.forEach((rd, i) => {
+    totalFound += rd.correctFound;
+    totalFalse += rd.falseFlags;
+    totalErrors += gameState.puzzle.rounds[i].errorCells.length;
+    roundDotData.push({found: rd.correctFound, total: gameState.puzzle.rounds[i].errorCells.length, score: rd.total});
+  });
+
+  const accuracy = totalErrors > 0 ? Math.round(totalFound / totalErrors * 100) : 0;
+  const perfectGame = totalFound === 14 && totalFalse === 0;
+  const perfectBonus = perfectGame ? 200 : 0;
+
+  let baseScore = gameState.scores.reduce((a,b) => a+b, 0) + perfectBonus;
+  const streakMult = streak.count >= 50 ? 0.20 : streak.count >= 20 ? 0.15 : streak.count >= 10 ? 0.10 : streak.count >= 5 ? 0.05 : 0;
+  const streakBonus = Math.round(baseScore * streakMult);
+  const totalScore = baseScore + streakBonus;
+
+  saveCompletion(totalScore, totalFound, totalFalse, accuracy, gameState.scores);
+
+  // Accuracy title
+  const titles = [
+    {min:14, falseMax:0, title:'PERFECT AUDIT', line:'"Zero variance. The auditors have nothing to do. You\'re expensive but worth it."'},
+    {min:Math.ceil(totalErrors*0.9), title:'SENIOR AUDITOR', line:'"One of the cleanest counts we\'ve had. Corporate is impressed."'},
+    {min:Math.ceil(totalErrors*0.75), title:'PASSING GRADE', line:'"Good enough for quarterly. But we both know there\'s room to improve."'},
+    {min:Math.ceil(totalErrors*0.5), title:'NEEDS TRAINING', line:'"Let\'s get you shadowing the A-team on the next cycle count."'},
+    {min:0, title:'SEE YOUR SUPERVISOR', line:'"I\'m going to pretend I didn\'t see this report."'}
+  ];
+  let tier = titles[titles.length - 1];
+  for (const t of titles) {
+    if (perfectGame && t.title === 'PERFECT AUDIT') { tier = t; break; }
+    if (!perfectGame && t.title === 'PERFECT AUDIT') continue;
+    if (totalFound >= t.min) { tier = t; break; }
+  }
+
+  // Populate end screen
+  document.getElementById('end-puzzle-header').textContent = `SPOT CHECK #${gameState.puzzleNum} — ${formatDate(gameState.date)}`;
+  document.getElementById('end-facility').textContent = gameState.puzzle.facilityName;
+  document.getElementById('end-title').textContent = tier.title;
+  document.getElementById('end-tagline').textContent = tier.line;
+  document.getElementById('end-found').textContent = `${totalFound}/${totalErrors}`;
+  document.getElementById('end-false').textContent = totalFalse;
+  document.getElementById('end-accuracy').textContent = accuracy + '%';
+  document.getElementById('end-streak-display').textContent = streak.count;
+
+  const breakdownRows = document.getElementById('end-breakdown-rows');
+  breakdownRows.innerHTML = '';
+  roundDotData.forEach((rd, i) => {
+    const row = document.createElement('div');
+    row.className = 'breakdown-row';
+    const dots = Array.from({length: rd.total}, (_, j) => `<div class="breakdown-dot ${j < rd.found ? 'found' : 'missed'}"></div>`).join('');
+    row.innerHTML = `<span class="breakdown-label">R${i+1}</span><div class="breakdown-dots">${dots}</div><span class="breakdown-score">+${Math.max(0, rd.score)}</span>`;
+    breakdownRows.appendChild(row);
+  });
+
+  const bonusRows = document.getElementById('end-bonus-rows');
+  bonusRows.innerHTML = '';
+  if (perfectBonus > 0) bonusRows.innerHTML += `<div class="end-bonus-row"><span class="end-bonus-label">Perfect game bonus</span><span class="end-bonus-val">+${perfectBonus}</span></div>`;
+  if (streakBonus > 0) bonusRows.innerHTML += `<div class="end-bonus-row"><span class="end-bonus-label">Streak multiplier (${Math.round(streakMult*100)}%)</span><span class="end-bonus-val">+${streakBonus}</span></div>`;
+
+  document.getElementById('end-total-score').textContent = totalScore.toLocaleString();
+
+  showScreen('end');
+
+  // Gather AI card
+  const dismissedToday = lsGet('spotcheck_gather_dismissed', '');
+  if (dismissedToday !== todayStr()) {
+    setTimeout(() => showGatherCard(totalFound, totalErrors), 2000);
+  }
+  if (perfectGame) sfxPerfectGame();
+}
+
+// === GATHER AI CARD ===
+function showGatherCard(found, total) {
+  let text = '';
+  const missed = total - found;
+  if (found === total) {
+    text = `Perfect audit. Impressive. Now imagine doing that across every bay, every night, without a human. That's what we built.`;
+  } else if (found >= 12) {
+    text = `You found ${found} errors. A Gather AI drone audits 200 bays in that time — every day, with 99%+ accuracy.`;
+  } else if (found >= 8) {
+    text = `You missed ${missed} error${missed!==1?'s':''}. In a real warehouse, each missed discrepancy costs an average of $250 in downstream impact. Gather AI catches them autonomously.`;
+  } else {
+    text = `${missed} error${missed!==1?'s':''} slipped through. Multiply that across 50 facilities and a million SKUs. That's the problem Gather AI solves.`;
+  }
+  document.getElementById('gather-card-text').textContent = text;
+  document.getElementById('gather-card').classList.add('visible');
+}
+
+function dismissGatherCard() {
+  document.getElementById('gather-card').classList.remove('visible');
+  lsSet('spotcheck_gather_dismissed', todayStr());
+}
+
+function openGatherCTA() {
+  window.open(GATHER_CTA_URL, '_blank');
+}
+
+// === SHARE ===
+function shareResult() {
+  const completed = getTodayCompletion();
+  if (!completed) return;
+  if (!gameState.puzzle) {
+    // Rebuild minimal share text from stored data
+    const streak = getStreak();
+    const streakText = streak.count > 0 ? ` | ${streak.count}-day streak 🔥` : '';
+    const text = `SPOT CHECK #${completed.puzzleNumber} — ${completed.score.toLocaleString()} pts${streakText}\n${SHARE_URL}`;
+    copyToClipboard(text); return;
+  }
+
+  const player = getPlayer();
+  const emojiGrid = gameState.roundsData.map((rd, i) => {
+    const errTotal = gameState.puzzle.rounds[i].errorCells.length;
+    return Array.from({length: errTotal}, (_, j) => j < rd.correctFound ? '🟢' : '⚫');
+  }).flat();
+
+  // Pad to 14
+  while (emojiGrid.length < 14) emojiGrid.push('⚫');
+
+  const streak = getStreak();
+  const streakText = streak.count > 0 ? ` | ${streak.count}-day streak 🔥` : '';
+  const title = document.getElementById('end-title').textContent;
+  const score = completed.score;
+  const found = completed.errorsFound;
+
+  const text = `SPOT CHECK #${gameState.puzzleNum} — ${title}\n${emojiGrid.join('')}\n${found}/14 found | ${score.toLocaleString()} pts${streakText}\n${SHARE_URL}`;
+
+  if (navigator.share) {
+    navigator.share({text}).catch(() => copyToClipboard(text));
+  } else {
+    copyToClipboard(text);
+  }
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => showToast('Copied!')).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Copied!');
+  });
+}
+
+// === STATS ===
+function initStatsScreen() {
+  const streak = getStreak();
+  const history = getHistory();
+  document.getElementById('stat-streak').textContent = streak.count;
+  const bestStreak = history.reduce((m, h) => Math.max(m, h.streak || 0), streak.count);
+  document.getElementById('stat-best-streak').textContent = bestStreak;
+  const bestScore = history.length ? Math.max(...history.map(h=>h.score)) : null;
+  document.getElementById('stat-best-score').textContent = bestScore ? bestScore.toLocaleString() : '—';
+
+  const histEl = document.getElementById('stats-history');
+  histEl.innerHTML = '';
+  if (history.length === 0) {
+    histEl.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px 0;">No games played yet</div>';
+    return;
+  }
+  history.slice(0, 20).forEach(h => {
+    const row = document.createElement('div');
+    row.className = 'history-row';
+    row.innerHTML = `<span class="history-date">${h.date}</span><span class="history-acc">${h.accuracy}%</span><span class="history-score">${h.score.toLocaleString()}</span>`;
+    histEl.appendChild(row);
+  });
+}
+
+// === TOAST ===
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+// === AUDIO (Web Audio API) ===
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freq, type, duration, gain=0.3, fadeOut=true) {
+  if (isMuted()) return;
+  try {
+    const ctx = getCtx();
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    osc.type = type; osc.frequency.value = freq;
+    g.gain.setValueAtTime(gain, ctx.currentTime);
+    if (fadeOut) g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.start(); osc.stop(ctx.currentTime + duration);
+  } catch {}
+}
+function sfxTap() { playTone(800, 'square', 0.08, 0.15); }
+function sfxUntap() { playTone(600, 'square', 0.08, 0.1); }
+function sfxSubmit(play=true) {
+  if (!play || isMuted()) return;
+  try {
+    const ctx = getCtx();
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.max(0, 1 - i / data.length);
+    const src = ctx.createBufferSource();
+    const g = ctx.createGain(); g.gain.value = 0.25;
+    src.buffer = buf; src.connect(g); g.connect(ctx.destination);
+    src.start();
+  } catch {}
+}
+function sfxCorrect() {
+  if (isMuted()) return;
+  setTimeout(() => playTone(880, 'sine', 0.15, 0.2), 0);
+  setTimeout(() => playTone(1100, 'sine', 0.2, 0.2), 100);
+}
+function sfxMissed() { playTone(220, 'sine', 0.3, 0.15); }
+function sfxFalseFlag() {
+  if (isMuted()) return;
+  playTone(440, 'square', 0.08, 0.1);
+  setTimeout(() => playTone(350, 'square', 0.08, 0.08), 100);
+}
+function sfxPerfectRound() {
+  if (isMuted()) return;
+  [0, 120, 240].forEach((delay, i) => setTimeout(() => playTone([880, 1100, 1320][i], 'sine', 0.3, 0.25), delay));
+}
+function sfxTimerWarning() {
+  if (isMuted()) return;
+  let count = 0;
+  const tick = setInterval(() => {
+    playTone(1000, 'square', 0.05, 0.08);
+    count++;
+    if (count >= 5) clearInterval(tick);
+  }, 500);
+}
+function sfxPerfectGame() {
+  if (isMuted()) return;
+  [0, 150, 300, 450].forEach((delay, i) => setTimeout(() => playTone([880, 1100, 1320, 1760][i], 'sine', 0.5, 0.3), delay));
+}
+function toggleMute() {
+  const muted = !isMuted();
+  lsSet('spotcheck_mute', muted);
+  document.getElementById('btn-mute').textContent = muted ? '🔇' : '🔊';
+  if (!muted) sfxTap();
+}
+
+// === SCREEN EVENTS ===
+const origShowScreen = showScreen;
+window.showScreen = function(id) {
+  origShowScreen(id);
+  if (id === 'stats') initStatsScreen();
+  if (id === 'title') initTitleScreen();
+};
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded', () => {
+  initTitleScreen();
+  // First visit: auto-show How to Play before title
+  const player = getPlayer();
+  const completed = getTodayCompletion();
+  if (!player.name && !completed) {
+    setTimeout(() => showScreen('howtoplay'), 300);
+  }
+});
+</script>
+</body>
+</html>
