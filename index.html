@@ -124,6 +124,22 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 .title-streak .flame { font-size: 16px; }
 .title-streak-count { font-weight: 700; color: var(--mint); }
 
+.mode-toggle {
+  display: flex; background: var(--dark-light); border-radius: 8px; padding: 3px;
+  position: relative; z-index: 1;
+}
+.mode-btn {
+  padding: 7px 20px; border-radius: 6px; font-size: 12px; font-weight: 700;
+  letter-spacing: 1px; color: var(--muted); transition: all 0.15s; font-family: var(--font-title);
+}
+.mode-btn.active { background: var(--card); color: var(--dark); box-shadow: var(--shadow); }
+.mode-btn.easy.active { color: var(--green); }
+.easy-mode-badge {
+  font-family: var(--font-mono); font-size: 11px; color: var(--green);
+  background: rgba(100,159,73,0.12); border: 1px solid rgba(100,159,73,0.3);
+  padding: 2px 8px; border-radius: 10px; letter-spacing: 1px;
+}
+
 .title-menu {
   display: flex; flex-direction: column; gap: 10px;
   width: 100%; max-width: 360px;
@@ -337,6 +353,11 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   margin-top: 40px;
   letter-spacing: 1px;
 }
+.briefing-hint {
+  font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 14px;
+  letter-spacing: 0.2px;
+}
+.briefing-hint strong { color: rgba(255,255,255,0.8); font-weight: 600; }
 .briefing-progress {
   position: absolute; bottom: 0; left: 0;
   height: 3px;
@@ -885,6 +906,10 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
       <span>-day streak</span>
     </div>
   </div>
+  <div class="mode-toggle" id="mode-toggle">
+    <button class="mode-btn hard active" id="mode-btn-hard" onclick="setMode('hard')">HARD</button>
+    <button class="mode-btn easy" id="mode-btn-easy" onclick="setMode('easy')">EASY</button>
+  </div>
   <div id="title-already-played" class="title-already-played hidden"></div>
   <div class="title-menu">
     <button class="btn-primary" id="btn-start" onclick="onStartGame()">START TODAY'S AUDIT</button>
@@ -926,6 +951,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 <div id="screen-briefing" class="screen" onclick="skipBriefing()">
   <div class="briefing-round" id="briefing-round-label">ROUND 1 OF 5</div>
   <div class="briefing-text" id="briefing-text">Receiving Dock: Verify the inbound against the manifest.</div>
+  <div class="briefing-hint" id="briefing-hint"></div>
   <div class="briefing-tap">TAP TO SKIP</div>
   <div class="briefing-progress" id="briefing-progress" style="width:100%"></div>
 </div>
@@ -933,7 +959,10 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 <!-- GAME SCREEN -->
 <div id="screen-game" class="screen">
   <div class="game-topbar">
-    <div class="game-puzzle-id" id="game-puzzle-id">SPOT CHECK #1</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="game-puzzle-id" id="game-puzzle-id">SPOT CHECK #1</div>
+      <div class="easy-mode-badge" id="easy-mode-badge" style="display:none">EASY</div>
+    </div>
     <div class="game-round-indicator" id="game-round-dots"></div>
   </div>
   <div class="timer-bar-wrap">
@@ -1084,6 +1113,12 @@ const ROUND_GRID_SIZES = [
 ];
 const ROUND_ERRORS = [2, 2, 3, 3, 4];
 const ROUND_TIMERS = [20, 20, 25, 25, 30];
+const EASY_ROUND_TIMERS = [40, 40, 50, 50, 60];
+const ERROR_TYPE_LABELS = {
+  countMismatch: 'Count Mismatch', wrongSlot: 'Wrong Slot',
+  fifoViolation: 'FIFO Violation', phantomInventory: 'Phantom Inventory',
+  weightViolation: 'Weight Violation', zoneViolation: 'Zone Violation'
+};
 const BADGE_ICONS = { cold: '❄️', hazmat: '🔶', perishable: '🌿', standard: '📦', highvalue: '💎' };
 const BADGE_LABELS = { cold: 'cold', hazmat: 'hazmat', perishable: 'perishable', standard: 'standard', highvalue: 'high-value' };
 
@@ -1155,9 +1190,10 @@ let timerInterval = null;
 let timerSeconds = 0;
 let briefingTimeout = null;
 let prng = null;
+let gameMode = 'hard';
 
 // === PUZZLE GENERATOR ===
-function generatePuzzle(dateStr) {
+function generatePuzzle(dateStr, easyMode = false) {
   const seed = dateToSeed(dateStr);
   prng = mulberry32(seed);
   const rng = prng;
@@ -1198,7 +1234,7 @@ function generatePuzzle(dateStr) {
     const gs = ROUND_GRID_SIZES[r];
     const totalCells = gs.cols * gs.rows;
     const errorCount = ROUND_ERRORS[r];
-    const errorPool = r < 2 ? ERROR_TYPES_SIMPLE : r < 4 ? ERROR_TYPES_MEDIUM : ERROR_TYPES_HARD;
+    const errorPool = easyMode ? ERROR_TYPES_MEDIUM : (r < 2 ? ERROR_TYPES_SIMPLE : r < 4 ? ERROR_TYPES_MEDIUM : ERROR_TYPES_HARD);
     const roundType = ROUND_TYPES[r];
 
     // Assign SKUs to cells
@@ -1342,6 +1378,14 @@ function isMuted() {
   return lsGet('spotcheck_mute', false);
 }
 
+function setMode(mode) {
+  gameMode = mode;
+  lsSet('spotcheck_mode', mode);
+  document.getElementById('mode-btn-hard').classList.toggle('active', mode === 'hard');
+  document.getElementById('mode-btn-easy').classList.toggle('active', mode === 'easy');
+  initTitleScreen();
+}
+
 function checkAndUpdateStreak() {
   const streak = getStreak();
   const today = todayStr();
@@ -1392,6 +1436,7 @@ function saveCompletion(score, errorsFound, falseFlags, accuracy, roundScores) {
 }
 
 function saveProgress() {
+  if (gameMode !== 'hard') return;
   lsSet('spotcheck_inprogress_' + todayStr(), {
     round: gameState.round,
     scores: gameState.scores,
@@ -1418,30 +1463,48 @@ function initTitleScreen() {
     streakWrap.style.display = 'none';
   }
 
-  const completed = getTodayCompletion();
+  // Update mode toggle UI
+  document.getElementById('mode-btn-hard').classList.toggle('active', gameMode === 'hard');
+  document.getElementById('mode-btn-easy').classList.toggle('active', gameMode === 'easy');
+
   const alreadyEl = document.getElementById('title-already-played');
   const startBtn = document.getElementById('btn-start');
 
-  if (completed) {
-    alreadyEl.textContent = `Score: ${completed.score.toLocaleString()} pts — COME BACK TOMORROW`;
-    alreadyEl.classList.remove('hidden');
-    startBtn.classList.add('already-played');
-    startBtn.textContent = "ALREADY AUDITED TODAY";
-    startBtn.onclick = null;
-  } else if (streak.freezeUsed) {
-    alreadyEl.textContent = "STREAK SAVED — don't miss again!";
-    alreadyEl.classList.remove('hidden');
-  } else if (streak.count === 0 && streak.lastPlayed !== '') {
-    alreadyEl.textContent = "STREAK: 0 — Start a new one today";
-    alreadyEl.classList.remove('hidden');
+  // Reset button state
+  startBtn.classList.remove('already-played');
+  startBtn.onclick = onStartGame;
+
+  if (gameMode === 'easy') {
+    alreadyEl.classList.add('hidden');
+    startBtn.textContent = "PLAY EASY MODE";
+  } else {
+    const completed = getTodayCompletion();
+    startBtn.textContent = "START TODAY'S AUDIT";
+    if (completed) {
+      alreadyEl.textContent = `Score: ${completed.score.toLocaleString()} pts — COME BACK TOMORROW`;
+      alreadyEl.classList.remove('hidden');
+      startBtn.classList.add('already-played');
+      startBtn.textContent = "ALREADY AUDITED TODAY";
+      startBtn.onclick = null;
+    } else if (streak.freezeUsed) {
+      alreadyEl.textContent = "STREAK SAVED — don't miss again!";
+      alreadyEl.classList.remove('hidden');
+    } else if (streak.count === 0 && streak.lastPlayed !== '') {
+      alreadyEl.textContent = "STREAK: 0 — Start a new one today";
+      alreadyEl.classList.remove('hidden');
+    } else {
+      alreadyEl.classList.add('hidden');
+    }
   }
 
   document.getElementById('btn-mute').textContent = isMuted() ? '🔇' : '🔊';
 }
 
 function onStartGame() {
-  const completed = getTodayCompletion();
-  if (completed) return;
+  if (gameMode === 'hard') {
+    const completed = getTodayCompletion();
+    if (completed) return;
+  }
 
   const player = getPlayer();
   if (!player.name) {
@@ -1465,7 +1528,7 @@ function saveName() {
 // === GAME LOOP ===
 function startGame() {
   const today = todayStr();
-  const puzzle = generatePuzzle(today);
+  const puzzle = generatePuzzle(today, gameMode === 'easy');
   gameState.date = today;
   gameState.puzzleNum = puzzle.puzzleNumber;
   gameState.facilityName = puzzle.facilityName;
@@ -1480,15 +1543,19 @@ function startGame() {
   gameState.playerCompany = player.company;
   gameState.streak = getStreak().count;
 
-  // Check for in-progress save
-  const inprog = lsGet('spotcheck_inprogress_' + today, null);
-  if (inprog && inprog.round > 0) {
-    gameState.round = inprog.round;
-    gameState.scores = inprog.scores || [];
-    gameState.roundsData = inprog.roundsData || [];
+  // Check for in-progress save (hard mode only)
+  if (gameMode === 'hard') {
+    const inprog = lsGet('spotcheck_inprogress_' + today, null);
+    if (inprog && inprog.round > 0) {
+      gameState.round = inprog.round;
+      gameState.scores = inprog.scores || [];
+      gameState.roundsData = inprog.roundsData || [];
+    }
   }
 
   document.getElementById('game-puzzle-id').textContent = `SPOT CHECK #${gameState.puzzleNum}`;
+  const easyBadge = document.getElementById('easy-mode-badge');
+  if (easyBadge) easyBadge.style.display = gameMode === 'easy' ? '' : 'none';
   updateRoundDots();
   startRound(gameState.round);
 }
@@ -1511,6 +1578,15 @@ function startRound(roundIdx) {
 function showBriefing(roundIdx, round) {
   document.getElementById('briefing-round-label').textContent = `ROUND ${roundIdx+1} OF 5`;
   document.getElementById('briefing-text').textContent = round.briefing;
+
+  const hintEl = document.getElementById('briefing-hint');
+  if (gameMode === 'easy' && round.errorTypes && round.errorTypes.length > 0) {
+    const typeNames = round.errorTypes.map(t => ERROR_TYPE_LABELS[t] || t).join(', ');
+    hintEl.innerHTML = `Look for: <strong>${typeNames}</strong>`;
+  } else {
+    hintEl.textContent = '';
+  }
+
   showScreen('briefing');
 
   let pct = 100;
@@ -1611,7 +1687,7 @@ function tapCell(i) {
 
 // === TIMER ===
 function startTimer(roundIdx) {
-  const duration = ROUND_TIMERS[roundIdx];
+  const duration = (gameMode === 'easy' ? EASY_ROUND_TIMERS : ROUND_TIMERS)[roundIdx];
   timerSeconds = duration;
   const bar = document.getElementById('timer-bar');
   bar.style.width = '100%';
@@ -1768,7 +1844,7 @@ function dismissScorecard() {
 
 // === END GAME ===
 function finishGame() {
-  const streak = incrementStreak();
+  const streak = gameMode === 'hard' ? incrementStreak() : getStreak();
   gameState.streak = streak.count;
 
   let totalErrors = 0, totalFound = 0, totalFalse = 0;
@@ -1790,7 +1866,7 @@ function finishGame() {
   const streakBonus = Math.round(baseScore * streakMult);
   const totalScore = baseScore + streakBonus;
 
-  saveCompletion(totalScore, totalFound, totalFalse, accuracy, gameState.scores);
+  if (gameMode === 'hard') saveCompletion(totalScore, totalFound, totalFalse, accuracy, gameState.scores);
 
   // Accuracy title
   const titles = [
@@ -1808,7 +1884,8 @@ function finishGame() {
   }
 
   // Populate end screen
-  document.getElementById('end-puzzle-header').textContent = `SPOT CHECK #${gameState.puzzleNum} — ${formatDate(gameState.date)}`;
+  const modeLabel = gameMode === 'easy' ? ' · EASY MODE' : '';
+  document.getElementById('end-puzzle-header').textContent = `SPOT CHECK #${gameState.puzzleNum}${modeLabel} — ${formatDate(gameState.date)}`;
   document.getElementById('end-facility').textContent = gameState.puzzle.facilityName;
   document.getElementById('end-title').textContent = tier.title;
   document.getElementById('end-tagline').textContent = tier.line;
@@ -2028,6 +2105,7 @@ window.showScreen = function(id) {
 
 // === INIT ===
 document.addEventListener('DOMContentLoaded', () => {
+  gameMode = lsGet('spotcheck_mode', 'hard');
   initTitleScreen();
   // First visit: auto-show How to Play before title
   const player = getPlayer();
