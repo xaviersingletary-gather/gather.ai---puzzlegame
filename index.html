@@ -884,6 +884,144 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
 /* === UTILITY === */
 .hidden { display: none !important; }
 .text-center { text-align: center; }
+
+/* === v1.1: PRACTICE / ONBOARDING === */
+#screen-practice { background: var(--bg); }
+.practice-header {
+  background: var(--dark); color: white;
+  padding: 12px 16px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.practice-header .ph-title {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 1px; color: var(--mint);
+}
+.btn-coach-skip {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.6); text-transform: uppercase;
+  padding: 4px 8px;
+}
+.coach-highlight {
+  outline: 3px solid var(--mint);
+  outline-offset: -1px;
+  border-radius: var(--radius-sm);
+  animation: coachPulse 1.2s ease-in-out infinite;
+}
+@keyframes coachPulse {
+  0%, 100% { outline-color: var(--mint); }
+  50% { outline-color: rgba(20,226,172,0.3); }
+}
+.practice-coach {
+  flex-shrink: 0;
+  background: var(--dark);
+  color: white;
+  padding: 16px 18px calc(16px + var(--safe-bottom));
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.15);
+}
+.practice-coach-text {
+  font-size: 15px; line-height: 1.45; font-weight: 600;
+  margin-bottom: 12px;
+}
+.practice-coach-text strong { color: var(--mint); }
+.practice-coach-actions { display: flex; gap: 10px; }
+.btn-coach-next {
+  background: var(--mint); color: var(--dark);
+  font-weight: 800; font-size: 14px; letter-spacing: 1px;
+  padding: 13px 20px; border-radius: var(--radius-sm);
+  flex: 1; text-transform: uppercase;
+}
+.coach-nudge {
+  color: var(--yellow); font-size: 13px; font-weight: 600;
+  min-height: 16px; margin-bottom: 8px;
+}
+
+/* === v1.1: FLOOR BAR (objective + grade pill) === */
+.floor-bar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 7px 14px;
+  background: var(--bg);
+  border-bottom: 1px solid rgba(56,84,74,0.08);
+  flex-shrink: 0;
+}
+.floor-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--dark); opacity: 0.7;
+}
+.floor-objective {
+  font-size: 11px; font-weight: 600; color: var(--red);
+  background: rgba(201,75,56,0.1);
+  padding: 2px 9px; border-radius: 10px;
+}
+.grade-pill {
+  margin-left: auto;
+  font-size: 10px; font-weight: 800; letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 3px 10px; border-radius: 10px;
+  background: var(--dark-light); color: var(--dark);
+  white-space: nowrap;
+}
+.grade-pill .gp-label { opacity: 0.55; font-weight: 700; margin-right: 4px; }
+.grade-pill.tier-perfect { background: rgba(20,226,172,0.18); color: var(--dark); }
+.grade-pill.tier-senior  { background: rgba(100,159,73,0.15); color: var(--green); }
+.grade-pill.tier-passing { background: rgba(118,174,234,0.18); color: #2f6db0; }
+.grade-pill.tier-training{ background: rgba(206,140,70,0.15); color: var(--orange); }
+.grade-pill.tier-risk    { background: rgba(201,75,56,0.12); color: var(--red); }
+
+/* === v1.1: HOW-TO error definitions + grade ladder === */
+.htp-def-list { display: flex; flex-direction: column; gap: 10px; }
+.htp-def { display: flex; flex-direction: column; gap: 2px; }
+.htp-def-term {
+  font-size: 13px; font-weight: 700; color: var(--dark);
+}
+.htp-def-text { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.htp-ladder {
+  background: var(--card); border-radius: var(--radius);
+  padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px;
+}
+.htp-ladder h3 {
+  font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+}
+.htp-ladder-row {
+  display: flex; align-items: baseline; gap: 10px;
+  font-size: 13px; padding: 5px 0;
+}
+.htp-ladder-grade { font-weight: 800; color: var(--dark); min-width: 130px; }
+.htp-ladder-req { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+
+/* === v1.1: END retention (streak nudge + countdown) === */
+.end-retention {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px 18px;
+  text-align: center;
+}
+.end-streak-nudge {
+  font-size: 14px; font-weight: 700; color: var(--dark); line-height: 1.4;
+}
+.end-streak-nudge .freeze-note {
+  display: block; font-size: 12px; font-weight: 600; color: var(--blue); margin-top: 4px;
+}
+.end-countdown {
+  font-size: 12px; color: var(--muted); margin-top: 8px;
+  font-family: var(--font-mono); letter-spacing: 0.5px;
+}
+.end-countdown strong { color: var(--dark); }
+
+/* === v1.1: LEADERBOARD placeholder === */
+#screen-leaderboard { background: var(--bg); padding: 24px; overflow-y: auto; }
+.lb-placeholder {
+  background: var(--card); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 28px 24px; text-align: center;
+  margin-top: 8px;
+}
+.lb-placeholder .lb-icon { font-size: 40px; margin-bottom: 12px; }
+.lb-placeholder h3 {
+  font-family: var(--font-title); font-size: 18px; font-weight: 800;
+  color: var(--dark); margin-bottom: 8px;
+}
+.lb-placeholder p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 18px; }
+.lb-actions { display: flex; flex-direction: column; gap: 10px; }
 </style>
 </head>
 <body>
@@ -915,7 +1053,7 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
     <button class="btn-primary" id="btn-start" onclick="onStartGame()">START TODAY'S AUDIT</button>
     <button class="btn-secondary" onclick="showScreen('howtoplay')">HOW TO PLAY</button>
     <button class="btn-secondary" onclick="showScreen('stats')">MY STATS</button>
-    <button class="btn-secondary" onclick="alert('Leaderboard coming soon!')">LEADERBOARD</button>
+    <button class="btn-secondary" onclick="showScreen('leaderboard')">LEADERBOARD</button>
   </div>
 </div>
 
@@ -936,21 +1074,45 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
   </div>
   <div class="htp-errors">
     <h3>Error Types</h3>
-    <span class="error-tag">Wrong Count</span>
-    <span class="error-tag">Wrong Slot</span>
-    <span class="error-tag">FIFO Violation</span>
-    <span class="error-tag">Phantom Inventory</span>
-    <span class="error-tag">Weight Violation</span>
-    <span class="error-tag">Zone Violation</span>
+    <div class="htp-def-list" id="htp-error-list"></div>
+  </div>
+  <div class="htp-ladder">
+    <h3>What you're playing for</h3>
+    <div id="htp-ladder-rows"></div>
   </div>
   <p style="font-size:12px;color:var(--muted);text-align:center;padding:4px 0 8px;">The better you know warehouses, the faster you'll spot them.</p>
+  <button class="btn-secondary" onclick="startPractice(true)" style="margin-bottom:10px;">TRY A PRACTICE BAY</button>
   <button class="btn-primary" onclick="showScreen('title')">GOT IT</button>
+</div>
+
+<!-- PRACTICE / ONBOARDING SCREEN -->
+<div id="screen-practice" class="screen">
+  <div class="practice-header">
+    <span class="ph-title">PRACTICE BAY — NO TIMER</span>
+    <button class="btn-coach-skip" onclick="finishPractice(true)">SKIP — I'VE GOT IT</button>
+  </div>
+  <div class="reference-panel" id="practice-ref">
+    <div class="ref-label">WHAT IT SHOULD BE — WMS Manifest</div>
+    <div class="ref-table" id="practice-ref-table"></div>
+  </div>
+  <div class="floor-bar">
+    <span class="floor-label">What's on the floor</span>
+  </div>
+  <div class="game-grid-wrap" id="practice-grid-wrap">
+    <div class="game-grid cols-4" id="practice-grid"></div>
+  </div>
+  <div class="practice-coach">
+    <div class="coach-nudge" id="coach-nudge"></div>
+    <div class="practice-coach-text" id="coach-text"></div>
+    <div class="practice-coach-actions" id="coach-actions"></div>
+  </div>
 </div>
 
 <!-- PRE-ROUND BRIEFING SCREEN -->
 <div id="screen-briefing" class="screen" onclick="skipBriefing()">
   <div class="briefing-round" id="briefing-round-label">ROUND 1 OF 5</div>
   <div class="briefing-text" id="briefing-text">Receiving Dock: Verify the inbound against the manifest.</div>
+  <div class="briefing-hint" id="briefing-objective" style="color:var(--mint);font-weight:600;"></div>
   <div class="briefing-hint" id="briefing-hint"></div>
   <div class="briefing-tap">TAP TO SKIP</div>
   <div class="briefing-progress" id="briefing-progress" style="width:100%"></div>
@@ -969,8 +1131,13 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
     <div class="timer-bar" id="timer-bar"></div>
   </div>
   <div class="reference-panel">
-    <div class="ref-label">Reference — <span id="ref-round-type">WMS Manifest</span></div>
+    <div class="ref-label">WHAT IT SHOULD BE — WMS Manifest<span id="ref-round-type" class="hidden"></span></div>
     <div class="ref-table" id="ref-table"></div>
+  </div>
+  <div class="floor-bar">
+    <span class="floor-label">What's on the floor</span>
+    <span class="floor-objective" id="floor-objective"></span>
+    <span class="grade-pill" id="grade-pill"><span class="gp-label">Grade</span><span id="grade-pill-val">—</span></span>
   </div>
   <div class="game-grid-wrap">
     <div class="game-grid" id="game-grid"></div>
@@ -1032,10 +1199,31 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
       </div>
     </div>
   </div>
+  <div class="end-retention">
+    <div class="end-streak-nudge" id="end-streak-nudge"></div>
+    <div class="end-countdown" id="end-countdown"></div>
+  </div>
   <div class="end-actions">
-    <button class="btn-end-action primary-action" onclick="shareResult()">SHARE</button>
-    <button class="btn-end-action" onclick="alert('Leaderboard coming soon!')">LEADERBOARD</button>
+    <button class="btn-end-action primary-action" onclick="shareResult()">CHALLENGE A COLLEAGUE</button>
+    <button class="btn-end-action" onclick="showScreen('leaderboard')">LEADERBOARD</button>
     <button class="btn-end-action" onclick="showScreen('stats')">MY STATS</button>
+  </div>
+</div>
+
+<!-- LEADERBOARD PLACEHOLDER SCREEN -->
+<div id="screen-leaderboard" class="screen">
+  <div class="modal-header">
+    <div class="modal-title">LEADERBOARD</div>
+    <button class="btn-close" onclick="showScreen('title')">✕</button>
+  </div>
+  <div class="lb-placeholder">
+    <div class="lb-icon">🏆</div>
+    <h3>Rankings are on the way</h3>
+    <p>A daily leaderboard is coming soon, so you can see how your audit stacks up against other floor pros.<br><br>For now, track your own run in <strong>My Stats</strong> — and challenge a colleague to beat your score.</p>
+    <div class="lb-actions">
+      <button class="btn-primary" onclick="showScreen('stats')">MY STATS</button>
+      <button class="btn-secondary" onclick="shareResult()">CHALLENGE A COLLEAGUE</button>
+    </div>
   </div>
 </div>
 
@@ -1057,6 +1245,14 @@ input { font-family: inherit; font-size: 16px; /* prevents iOS zoom on focus */ 
     <div class="stat-card">
       <div class="stat-card-val" id="stat-best-score">—</div>
       <div class="stat-card-label">Best Score</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-val" id="stat-played">0</div>
+      <div class="stat-card-label">Puzzles Played</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-val" id="stat-passrate">—</div>
+      <div class="stat-card-label">Pass Rate</div>
     </div>
   </div>
   <div class="history-table" id="stats-history"></div>
@@ -1127,6 +1323,36 @@ const ERROR_TYPES_SIMPLE   = ['countMismatch', 'wrongSlot'];
 const ERROR_TYPES_MEDIUM   = ['countMismatch', 'wrongSlot', 'fifoViolation', 'phantomInventory'];
 const ERROR_TYPES_HARD     = ['countMismatch', 'wrongSlot', 'fifoViolation', 'phantomInventory', 'weightViolation', 'zoneViolation'];
 
+// Plain-English definitions for each error type (shown on How-To + Easy briefing)
+const ERROR_TYPE_DEFS = {
+  countMismatch: 'The counted quantity doesn’t match what the manifest says should be there.',
+  wrongSlot: 'The wrong SKU is sitting in this slot — it belongs somewhere else.',
+  fifoViolation: 'Newer stock staged in front of older stock that should ship first.',
+  phantomInventory: 'The slot reads EMPTY but the system still shows quantity on hand.',
+  weightViolation: 'The load exceeds the safe weight limit for that rack level.',
+  zoneViolation: 'Product stored outside its required zone — e.g. a frozen SKU in an ambient bay.'
+};
+
+// Grade ladder — single source of truth for both the end screen and the live in-game pill.
+const GRADE_TIERS = [
+  {key:'perfect',  title:'PERFECT AUDIT',      cls:'tier-perfect',  pct:1.0,  req:'All errors · no false flags', line:'"Zero variance. The auditors have nothing to do. You\'re expensive but worth it."'},
+  {key:'senior',   title:'SENIOR AUDITOR',     cls:'tier-senior',   pct:0.9,  req:'90%+ of errors found',       line:'"One of the cleanest counts we\'ve had. Corporate is impressed."'},
+  {key:'passing',  title:'PASSING GRADE',      cls:'tier-passing',  pct:0.75, req:'75%+ of errors found',       line:'"Good enough for quarterly. But we both know there\'s room to improve."'},
+  {key:'training', title:'NEEDS TRAINING',     cls:'tier-training', pct:0.5,  req:'50%+ of errors found',       line:'"Let\'s get you shadowing the A-team on the next cycle count."'},
+  {key:'risk',     title:'SEE YOUR SUPERVISOR',cls:'tier-risk',     pct:0,    req:'Below 50%',                  line:'"I\'m going to pretend I didn\'t see this report."'}
+];
+const PASSING_KEYS = ['perfect', 'senior', 'passing'];
+
+// Returns the grade tier for a given performance. Used identically for the
+// end-of-game grade and the live between-rounds pill so they always agree.
+function computeGrade(found, totalErrors, falseFlags) {
+  if (totalErrors > 0 && found === totalErrors && falseFlags === 0) return GRADE_TIERS[0];
+  for (let i = 1; i < GRADE_TIERS.length; i++) {
+    if (found >= Math.ceil(totalErrors * GRADE_TIERS[i].pct)) return GRADE_TIERS[i];
+  }
+  return GRADE_TIERS[GRADE_TIERS.length - 1];
+}
+
 // Facility names
 const FACILITY_NAMES = ['DC-42 Memphis','DC-07 Dallas','DC-18 Columbus','DC-31 Louisville','DC-55 Phoenix','DC-12 Atlanta','DC-29 Indianapolis','DC-63 Charlotte','DC-04 Denver','DC-48 Kansas City','DC-22 Nashville','DC-37 Pittsburgh'];
 
@@ -1191,6 +1417,9 @@ let timerSeconds = 0;
 let briefingTimeout = null;
 let prng = null;
 let gameMode = 'hard';
+
+// Debug/test handle — gameState is only ever mutated, never reassigned, so this reference stays live.
+if (typeof window !== 'undefined') window.gameState = gameState;
 
 // === PUZZLE GENERATOR ===
 function generatePuzzle(dateStr, easyMode = false) {
@@ -1557,6 +1786,7 @@ function startGame() {
   const easyBadge = document.getElementById('easy-mode-badge');
   if (easyBadge) easyBadge.style.display = gameMode === 'easy' ? '' : 'none';
   updateRoundDots();
+  updateGradePill(); // seed the live grade (— at round 1, or restored grade on resume)
   startRound(gameState.round);
 }
 
@@ -1579,10 +1809,17 @@ function showBriefing(roundIdx, round) {
   document.getElementById('briefing-round-label').textContent = `ROUND ${roundIdx+1} OF 5`;
   document.getElementById('briefing-text').textContent = round.briefing;
 
+  // Objective: state the goal up front (both modes), without revealing which cells
+  const n = round.errorCells.length;
+  document.getElementById('briefing-objective').textContent =
+    `${n} discrepanc${n === 1 ? 'y' : 'ies'} hidden — find them all, don't flag clean bays.`;
+
   const hintEl = document.getElementById('briefing-hint');
   if (gameMode === 'easy' && round.errorTypes && round.errorTypes.length > 0) {
-    const typeNames = round.errorTypes.map(t => ERROR_TYPE_LABELS[t] || t).join(', ');
-    hintEl.innerHTML = `Look for: <strong>${typeNames}</strong>`;
+    const uniqueTypes = [...new Set(round.errorTypes)];
+    const lines = uniqueTypes.map(t =>
+      `<strong>${ERROR_TYPE_LABELS[t] || t}</strong> — ${ERROR_TYPE_DEFS[t] || ''}`).join('<br>');
+    hintEl.innerHTML = `Look for:<br>${lines}`;
   } else {
     hintEl.textContent = '';
   }
@@ -1619,8 +1856,11 @@ function launchRound(roundIdx, round) {
   showScreen('game');
   updateRoundDots();
 
+  // Per-round objective (count only — never reveals which cells / which type)
+  const n = round.errorCells.length;
+  document.getElementById('floor-objective').textContent = `${n} discrepanc${n === 1 ? 'y' : 'ies'} hidden`;
+
   // Build reference panel
-  document.getElementById('ref-round-type').textContent = round.type;
   const refTable = document.getElementById('ref-table');
   refTable.innerHTML = '';
   round.refItems.slice(0, 16).forEach(item => {
@@ -1758,6 +1998,7 @@ function submitRound() {
   // Animate resolution
   resolveRound(round, foundList, missed, falseFlagList, () => {
     showScorecard(roundIdx, correctFound, round.errorCells.length, falseFlags, timeBonus, perfectBonus, roundScore, () => {
+      updateGradePill(); // refresh live grade between rounds (never mid-round)
       flaggedCells.clear();
       gameState.round++;
       saveProgress();
@@ -1866,22 +2107,12 @@ function finishGame() {
   const streakBonus = Math.round(baseScore * streakMult);
   const totalScore = baseScore + streakBonus;
 
-  if (gameMode === 'hard') saveCompletion(totalScore, totalFound, totalFalse, accuracy, gameState.scores);
+  if (gameMode === 'hard') { saveCompletion(totalScore, totalFound, totalFalse, accuracy, gameState.scores); submitScore(); }
 
-  // Accuracy title
-  const titles = [
-    {min:14, falseMax:0, title:'PERFECT AUDIT', line:'"Zero variance. The auditors have nothing to do. You\'re expensive but worth it."'},
-    {min:Math.ceil(totalErrors*0.9), title:'SENIOR AUDITOR', line:'"One of the cleanest counts we\'ve had. Corporate is impressed."'},
-    {min:Math.ceil(totalErrors*0.75), title:'PASSING GRADE', line:'"Good enough for quarterly. But we both know there\'s room to improve."'},
-    {min:Math.ceil(totalErrors*0.5), title:'NEEDS TRAINING', line:'"Let\'s get you shadowing the A-team on the next cycle count."'},
-    {min:0, title:'SEE YOUR SUPERVISOR', line:'"I\'m going to pretend I didn\'t see this report."'}
-  ];
-  let tier = titles[titles.length - 1];
-  for (const t of titles) {
-    if (perfectGame && t.title === 'PERFECT AUDIT') { tier = t; break; }
-    if (!perfectGame && t.title === 'PERFECT AUDIT') continue;
-    if (totalFound >= t.min) { tier = t; break; }
-  }
+  // Accuracy title — shared grade logic (matches the live in-game pill)
+  const tier = computeGrade(totalFound, totalErrors, totalFalse);
+  // Final sync of the live grade pill so it equals the end-screen grade after round 5.
+  updateGradePill();
 
   // Populate end screen
   const modeLabel = gameMode === 'easy' ? ' · EASY MODE' : '';
@@ -1911,6 +2142,7 @@ function finishGame() {
 
   document.getElementById('end-total-score').textContent = totalScore.toLocaleString();
 
+  renderEndRetention(streak);
   showScreen('end');
 
   // Gather AI card
@@ -1954,9 +2186,9 @@ function shareResult() {
   if (!gameState.puzzle) {
     // Rebuild minimal share text from stored data
     const streak = getStreak();
-    const streakText = streak.count > 0 ? ` | ${streak.count}-day streak 🔥` : '';
-    const text = `SPOT CHECK #${completed.puzzleNumber} — ${completed.score.toLocaleString()} pts${streakText}\n${SHARE_URL}`;
-    copyToClipboard(text); return;
+    const streakText = streak.count > 0 ? ` ${streak.count}-day streak 🔥` : '';
+    const text = `I scored ${completed.score.toLocaleString()} on Spot Check #${completed.puzzleNumber}.${streakText}\nThink you know the floor better?\n${SHARE_URL}`;
+    shareOrCopy(text); return;
   }
 
   const player = getPlayer();
@@ -1969,13 +2201,19 @@ function shareResult() {
   while (emojiGrid.length < 14) emojiGrid.push('⚫');
 
   const streak = getStreak();
-  const streakText = streak.count > 0 ? ` | ${streak.count}-day streak 🔥` : '';
+  const streakText = streak.count > 0 ? ` · ${streak.count}-day streak 🔥` : '';
   const title = document.getElementById('end-title').textContent;
   const score = completed.score;
   const found = completed.errorsFound;
 
-  const text = `SPOT CHECK #${gameState.puzzleNum} — ${title}\n${emojiGrid.join('')}\n${found}/14 found | ${score.toLocaleString()} pts${streakText}\n${SHARE_URL}`;
+  // Challenge framing — spoiler-free grid reveals counts only, never cell positions/types.
+  const text = `I scored ${score.toLocaleString()} on Spot Check #${gameState.puzzleNum} — ${title}.\n${emojiGrid.join('')}\n${found}/14 found${streakText}\nThink you know the floor better?\n${SHARE_URL}`;
 
+  shareOrCopy(text);
+}
+
+// Native share where supported, clipboard everywhere else.
+function shareOrCopy(text) {
   if (navigator.share) {
     navigator.share({text}).catch(() => copyToClipboard(text));
   } else {
@@ -2004,6 +2242,21 @@ function initStatsScreen() {
   const bestScore = history.length ? Math.max(...history.map(h=>h.score)) : null;
   document.getElementById('stat-best-score').textContent = bestScore ? bestScore.toLocaleString() : '—';
 
+  // Puzzles played + pass rate (% at PASSING GRADE or better), from stored completions
+  let played = 0, passed = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('spotcheck_completed_')) {
+      const c = lsGet(key, null);
+      if (!c) continue;
+      played++;
+      const g = computeGrade(c.errorsFound || 0, 14, c.falseFlags || 0);
+      if (PASSING_KEYS.includes(g.key)) passed++;
+    }
+  }
+  document.getElementById('stat-played').textContent = played;
+  document.getElementById('stat-passrate').textContent = played ? Math.round(passed / played * 100) + '%' : '—';
+
   const histEl = document.getElementById('stats-history');
   histEl.innerHTML = '';
   if (history.length === 0) {
@@ -2017,6 +2270,185 @@ function initStatsScreen() {
     histEl.appendChild(row);
   });
 }
+
+// === v1.1: LIVE GRADE PILL ===
+function updateGradePill() {
+  const valEl = document.getElementById('grade-pill-val');
+  const pill = document.getElementById('grade-pill');
+  if (!valEl || !pill || !gameState.puzzle) return;
+  let found = 0, errs = 0, fls = 0;
+  gameState.roundsData.forEach((rd, i) => {
+    found += rd.correctFound;
+    fls += rd.falseFlags;
+    errs += gameState.puzzle.rounds[i].errorCells.length;
+  });
+  pill.className = 'grade-pill';
+  if (errs === 0) { valEl.textContent = '—'; return; } // no rounds resolved yet
+  const g = computeGrade(found, errs, fls);
+  valEl.textContent = g.title;
+  pill.classList.add(g.cls);
+}
+
+// === v1.1: END-SCREEN RETENTION (streak nudge + next-puzzle countdown) ===
+let endCountdownInterval = null;
+function renderEndRetention(streak) {
+  const nudgeEl = document.getElementById('end-streak-nudge');
+  if (streak.count > 0) {
+    let html = `🔥 ${streak.count}-day streak — come back tomorrow to keep it going.`;
+    if (streak.count >= 7 && streak.freezeAvailable && !streak.freezeUsed) {
+      html += `<span class="freeze-note">❄️ Streak freeze ready — one missed day is covered.</span>`;
+    }
+    nudgeEl.innerHTML = html;
+  } else {
+    nudgeEl.innerHTML = `Come back tomorrow to start a streak.`;
+  }
+  startEndCountdown();
+}
+function startEndCountdown() {
+  stopEndCountdown();
+  const el = document.getElementById('end-countdown');
+  const tick = () => {
+    const now = new Date();
+    const mid = new Date(now); mid.setHours(24, 0, 0, 0); // next local midnight
+    const s = Math.max(0, Math.floor((mid - now) / 1000));
+    const h = String(Math.floor(s / 3600)).padStart(2, '0');
+    const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+    const sec = String(s % 60).padStart(2, '0');
+    el.innerHTML = `Next audit drops in <strong>${h}:${m}:${sec}</strong>`;
+  };
+  tick();
+  endCountdownInterval = setInterval(tick, 1000);
+}
+function stopEndCountdown() {
+  if (endCountdownInterval) { clearInterval(endCountdownInterval); endCountdownInterval = null; }
+}
+
+// === v1.1: HOW-TO content (error definitions + grade ladder) ===
+function renderErrorDefs() {
+  const el = document.getElementById('htp-error-list');
+  if (!el) return;
+  el.innerHTML = '';
+  Object.keys(ERROR_TYPE_DEFS).forEach(k => {
+    const div = document.createElement('div');
+    div.className = 'htp-def';
+    div.innerHTML = `<span class="htp-def-term">${ERROR_TYPE_LABELS[k]}</span><span class="htp-def-text">${ERROR_TYPE_DEFS[k]}</span>`;
+    el.appendChild(div);
+  });
+}
+function renderGradeLadder() {
+  const el = document.getElementById('htp-ladder-rows');
+  if (!el) return;
+  el.innerHTML = '';
+  GRADE_TIERS.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'htp-ladder-row';
+    div.innerHTML = `<span class="htp-ladder-grade">${t.title}</span><span class="htp-ladder-req">${t.req}</span>`;
+    el.appendChild(div);
+  });
+}
+
+// === v1.1: PRACTICE BAY (forced first-visit onboarding) ===
+const PRACTICE_REF = [
+  {slot:'A-12', sku:'SKU-1024', qty:24},
+  {slot:'B-08', sku:'SKU-2210', qty:36},
+  {slot:'C-03', sku:'SKU-4471', qty:18},
+  {slot:'D-15', sku:'SKU-3052', qty:50}
+];
+const PRACTICE_CELLS = [
+  {bayId:'A-12-03', displaySku:'SKU-1024', qty:40, badge:'standard',  isError:true},  // count mismatch (manifest says 24)
+  {bayId:'B-08-02', displaySku:'SKU-2210', qty:36, badge:'cold',      isError:false},
+  {bayId:'C-03-01', displaySku:'SKU-4471', qty:18, badge:'standard',  isError:false},
+  {bayId:'D-15-04', displaySku:'SKU-3052', qty:50, badge:'highvalue', isError:false}
+];
+let practiceStep = 0;
+
+function startPractice() {
+  practiceStep = 0;
+  const refTable = document.getElementById('practice-ref-table');
+  refTable.innerHTML = '';
+  PRACTICE_REF.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'ref-item';
+    div.innerHTML = `<span class="ref-slot">${item.slot}</span><br><span class="ref-sku">${item.sku} · ${item.qty}</span>`;
+    refTable.appendChild(div);
+  });
+  const grid = document.getElementById('practice-grid');
+  grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+  grid.innerHTML = '';
+  PRACTICE_CELLS.forEach((cell, i) => {
+    const div = document.createElement('div');
+    div.className = 'cell';
+    div.id = `practice-cell-${i}`;
+    div.onclick = () => practiceTapCell(i);
+    div.innerHTML = `
+      <div class="cell-bay">${cell.bayId}</div>
+      <div class="cell-badge-row"><span class="cell-badge">${BADGE_ICONS[cell.badge] || '📦'}</span></div>
+      <div class="cell-flag-badge">!</div>
+      <div class="cell-sku">${cell.displaySku}</div>
+      <div><span class="cell-qty">${cell.qty}</span><span class="cell-qty-label"> units</span></div>
+      <div class="cell-check">✓</div>`;
+    grid.appendChild(div);
+  });
+  showScreen('practice');
+  renderPracticeStep();
+}
+
+function renderPracticeStep() {
+  const text = document.getElementById('coach-text');
+  const actions = document.getElementById('coach-actions');
+  document.getElementById('coach-nudge').textContent = '';
+  document.getElementById('practice-ref').classList.remove('coach-highlight');
+  document.getElementById('practice-grid-wrap').classList.remove('coach-highlight');
+  if (practiceStep === 0) {
+    document.getElementById('practice-ref').classList.add('coach-highlight');
+    text.innerHTML = `This is the <strong>manifest</strong> — what <em>should</em> be in each slot.`;
+    actions.innerHTML = `<button class="btn-coach-next" onclick="advancePractice()">NEXT</button>`;
+  } else if (practiceStep === 1) {
+    document.getElementById('practice-grid-wrap').classList.add('coach-highlight');
+    text.innerHTML = `This is the <strong>floor</strong> — what the drone actually counted. Spot the bay that doesn't match.`;
+    actions.innerHTML = `<button class="btn-coach-next" onclick="advancePractice()">NEXT</button>`;
+  } else if (practiceStep === 2) {
+    text.innerHTML = `Slot <strong>A-12</strong> should hold <strong>24 units</strong>. The floor shows <strong>40</strong> — a miscount. Tap that bay to flag it.`;
+    actions.innerHTML = '';
+  } else if (practiceStep === 3) {
+    text.innerHTML = `That's it — you flagged the discrepancy. Hit <strong>submit</strong> to finish your first audit.`;
+    actions.innerHTML = `<button class="btn-coach-next" onclick="practiceSubmit()">SUBMIT</button>`;
+  }
+}
+
+function advancePractice() { practiceStep++; renderPracticeStep(); }
+
+function practiceTapCell(i) {
+  if (practiceStep !== 2) return; // only interactive at the tap step
+  if (i === 0) {
+    document.getElementById('practice-cell-0').classList.add('flagged');
+    sfxTap();
+    practiceStep = 3;
+    renderPracticeStep();
+  } else {
+    document.getElementById('coach-nudge').textContent = "Not quite — that bay matches the manifest. Look for the count that doesn't.";
+    sfxUntap();
+  }
+}
+
+function practiceSubmit() {
+  const el = document.getElementById('practice-cell-0');
+  el.classList.add('resolved-found', 'animate-flash-green');
+  sfxCorrect();
+  setTimeout(() => finishPractice(false), 900);
+}
+
+function finishPractice(skipped) {
+  lsSet('spotcheck_onboarded', true);
+  document.getElementById('practice-ref').classList.remove('coach-highlight');
+  document.getElementById('practice-grid-wrap').classList.remove('coach-highlight');
+  showScreen('title');
+  if (!skipped) showToast('Nice — real audits are timed. Good luck.');
+}
+
+// === v1.2 SEAM: inert stubs (no backend in v1.1). See SPOT_CHECK_SPEC_v1.1 §11. ===
+function submitScore() { return null; }   // v1.2: POST completed score to scores API
+function getBenchmark() { return null; }  // v1.2: GET percentile for this puzzle
 
 // === TOAST ===
 function showToast(msg) {
@@ -2099,6 +2531,7 @@ function toggleMute() {
 const origShowScreen = showScreen;
 window.showScreen = function(id) {
   origShowScreen(id);
+  if (id !== 'end') stopEndCountdown(); // tear down the countdown when leaving the end screen
   if (id === 'stats') initStatsScreen();
   if (id === 'title') initTitleScreen();
 };
@@ -2107,11 +2540,12 @@ window.showScreen = function(id) {
 document.addEventListener('DOMContentLoaded', () => {
   gameMode = lsGet('spotcheck_mode', 'hard');
   initTitleScreen();
-  // First visit: auto-show How to Play before title
-  const player = getPlayer();
-  const completed = getTodayCompletion();
-  if (!player.name && !completed) {
-    setTimeout(() => showScreen('howtoplay'), 300);
+  renderErrorDefs();
+  renderGradeLadder();
+  // First-ever visit: force the interactive practice bay before anything else
+  const onboarded = lsGet('spotcheck_onboarded', false);
+  if (!onboarded) {
+    setTimeout(() => startPractice(), 300);
   }
 });
 </script>
